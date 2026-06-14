@@ -1,0 +1,66 @@
+{
+  "id": "hr-pack-01",
+  "title": "HR Interview Collocations",
+  "items": [
+    {
+      "phrase": "distributed systems",
+      "meaning": "Software spread across multiple nodes that must coordinate",
+      "visualMetaphor": "scalability",
+      "examples": ["I design distributed systems for high availability."]
+    },
+    {
+      "phrase": "internal platforms",
+      "meaning": "Shared infrastructure that other teams build on",
+      "visualMetaphor": "maintainability",
+      "examples": ["I built internal platforms that reduced onboarding time."]
+    },
+    {
+      "phrase": "operational efficiency",
+      "meaning": "Doing more with less operational overhead",
+      "visualMetaphor": "bottleneck",
+      "examples": ["We improved operational efficiency by 40%."]
+    },
+    {
+      "phrase": "identify bottlenecks",
+      "meaning": "Find the slowest part of a system or process",
+      "visualMetaphor": "bottleneck",
+      "examples": ["I helped identify bottlenecks in our CI/CD pipeline."]
+    },
+    {
+      "phrase": "improve scalability",
+      "meaning": "Make a system handle more load without breaking",
+      "visualMetaphor": "scalability",
+      "examples": ["The goal was to improve scalability under peak load."]
+    },
+    {
+      "phrase": "align on priorities",
+      "meaning": "Get stakeholders to agree on what matters most",
+      "visualMetaphor": "alignment",
+      "examples": ["I aligned on priorities with product and platform teams."]
+    },
+    {
+      "phrase": "reduce complexity",
+      "meaning": "Simplify systems to make them easier to maintain",
+      "visualMetaphor": "complexity",
+      "examples": ["We reduced complexity by consolidating three services."]
+    },
+    {
+      "phrase": "validate assumptions",
+      "meaning": "Test whether your beliefs about users or systems are correct",
+      "visualMetaphor": "observability",
+      "examples": ["We validated assumptions with production metrics."]
+    },
+    {
+      "phrase": "stakeholder management",
+      "meaning": "Communicating effectively with people who depend on your work",
+      "visualMetaphor": "alignment",
+      "examples": ["Stakeholder management was key during the migration."]
+    },
+    {
+      "phrase": "measurable impact",
+      "meaning": "Results you can quantify with numbers or outcomes",
+      "visualMetaphor": "reliability",
+      "examples": ["I focus on delivering measurable impact, not just features."]
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "characters": [
+    {
+      "id": "uncle_eugene",
+      "name": "Uncle Eugene",
+      "title": "The Mentor",
+      "role": "narrator",
+      "bio": "Wise Staff Engineer bear. Systems over hype.",
+      "traits": ["Mentor", "Storyteller", "Systems Thinker", "Calm & Strong"],
+      "poses": ["default", "thinking", "pointing"],
+      "voiceStyle": "warm, practical, compresses complexity",
+      "appearsIn": ["tips", "summaries"],
+      "spritePath": "/sprites/uncle_eugene",
+      "color": "#92400e"
+    },
+    {
+      "id": "trace",
+      "name": "Trace",
+      "title": "AI Assistant",
+      "role": "coach",
+      "bio": "Observability-native coach. Helpful, not perfect.",
+      "traits": ["Observability", "Analysis", "Feedback", "Always Learning"],
+      "poses": ["float_idle", "scanning", "thinking"],
+      "appearsIn": ["coaching_panel", "scene_overlay"],
+      "spritePath": "/sprites/trace",
+      "color": "#0891b2"
+    },
+    {
+      "id": "protagonist",
+      "name": "Eugene",
+      "title": "Founder Engineer",
+      "role": "player_avatar",
+      "configurable": true,
+      "defaultAvatarKey": "eugene",
+      "avatarOptions": ["eugene", "alex"],
+      "traits": ["Builder", "Curious", "Problem Solver", "Growth Mindset"],
+      "poses": ["neutral", "thinking", "speaking"],
+      "spritePath": "/sprites/protagonist",
+      "color": "#6366f1"
+    },
+    {
+      "id": "sophia",
+      "name": "Sophia",
+      "title": "Tech Recruiter",
+      "role": "npc_interviewer",
+      "bio": "Startup-native talent partner who evaluates clarity and impact.",
+      "traits": ["People Expert", "Evaluator", "Clear Communicator", "Startup Native"],
+      "poses": ["neutral_smile", "probing", "impressed"],
+      "spritePath": "/sprites/sophia",
+      "color": "#db2777"
+    },
+    {
+      "id": "archi",
+      "name": "Archi",
+      "title": "Principal Architect",
+      "role": "npc_architect",
+      "bio": "Big-picture thinker focused on trade-offs and system coherence.",
+      "traits": ["Architecture", "Trade-offs", "Big Picture", "Clarity"],
+      "poses": ["default", "whiteboard", "concerned"],
+      "spritePath": "/sprites/archi",
+      "color": "#059669"
+    },
+    {
+      "id": "reli",
+      "name": "Reli",
+      "title": "Reliability Guardian",
+      "role": "npc_sre",
+      "bio": "Uptime-first engineer who thinks in incidents and observability.",
+      "traits": ["Reliability", "Monitoring", "Incident Response", "Uptime First"],
+      "poses": ["default", "alert", "calm"],
+      "spritePath": "/sprites/reli",
+      "color": "#dc2626"
+    }
+  ]
+}

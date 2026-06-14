@@ -1,0 +1,344 @@
+{
+  "id": "hr-intro",
+  "version": "1.0.0",
+  "path": "hr-interviews",
+  "title": "Tell Me About Yourself",
+  "subtitle": "HR Interview — Staff Engineer Introduction",
+  "difficulty": "A2-B1",
+  "meta": {
+    "durationMinutes": 25,
+    "sceneCount": 8,
+    "tags": ["interview", "introduction", "staff-engineer"]
+  },
+  "characters": ["sophia", "protagonist", "trace"],
+  "collocationPackId": "hr-pack-01",
+  "scenes": [
+    {
+      "id": "scene-01",
+      "index": 1,
+      "background": "startup_office_night",
+      "music": null,
+      "layers": [
+        {
+          "characterId": "sophia",
+          "pose": "neutral_smile",
+          "position": { "x": "28%", "y": "55%", "scale": 1.0 },
+          "flip": false
+        },
+        {
+          "characterId": "protagonist",
+          "pose": "thinking",
+          "position": { "x": "62%", "y": "58%", "scale": 1.0 },
+          "flip": true
+        },
+        {
+          "characterId": "trace",
+          "pose": "float_idle",
+          "position": { "x": "78%", "y": "35%", "scale": 0.6 },
+          "flip": false
+        }
+      ],
+      "dialogue": [
+        {
+          "speakerId": "sophia",
+          "text": "Hi {protagonistName}! Thanks for joining us today. Let's start with the basics — tell me about yourself.",
+          "emotion": "welcoming"
+        }
+      ],
+      "interaction": {
+        "type": "user_response",
+        "prompt": "Introduce yourself as a Staff Software Engineer.",
+        "hints": ["mention domain", "mention scale", "mention impact"],
+        "requiredCollocations": ["distributed systems", "internal platforms"],
+        "traceContext": "First impression in staff-level HR screen. User should state level, domain, and one impact hook.",
+        "starEnabled": true,
+        "practice432Enabled": true,
+        "advanceCondition": "analysis_submitted"
+      },
+      "uncleEugeneTip": "Strong engineers don't try to sound smart. They make difficult ideas feel simple."
+    },
+    {
+      "id": "scene-02",
+      "index": 2,
+      "background": "startup_office_night",
+      "music": null,
+      "layers": [
+        {
+          "characterId": "sophia",
+          "pose": "probing",
+          "position": { "x": "30%", "y": "55%", "scale": 1.0 },
+          "flip": false
+        },
+        {
+          "characterId": "protagonist",
+          "pose": "speaking",
+          "position": { "x": "65%", "y": "58%", "scale": 1.0 },
+          "flip": true
+        },
+        {
+          "characterId": "trace",
+          "pose": "scanning",
+          "position": { "x": "80%", "y": "30%", "scale": 0.55 },
+          "flip": false
+        }
+      ],
+      "dialogue": [
+        {
+          "speakerId": "sophia",
+          "text": "That's a good start. Can you go deeper — what kind of systems have you built, and at what scale?",
+          "emotion": "curious"
+        }
+      ],
+      "interaction": {
+        "type": "user_response",
+        "prompt": "Describe the systems you've built and their scale.",
+        "hints": ["team size", "traffic volume", "technical scope"],
+        "requiredCollocations": ["improve scalability", "operational efficiency"],
+        "traceContext": "User should add concrete scale signals: users, requests, teams, or infrastructure size.",
+        "starEnabled": true,
+        "practice432Enabled": true,
+        "advanceCondition": "analysis_submitted"
+      },
+      "uncleEugeneTip": "Numbers make stories believable. Even rough estimates help."
+    },
+    {
+      "id": "scene-03",
+      "index": 3,
+      "background": "startup_office_night",
+      "music": null,
+      "layers": [
+        {
+          "characterId": "sophia",
+          "pose": "probing",
+          "position": { "x": "32%", "y": "55%", "scale": 1.0 },
+          "flip": false
+        },
+        {
+          "characterId": "protagonist",
+          "pose": "thinking",
+          "position": { "x": "63%", "y": "58%", "scale": 1.0 },
+          "flip": true
+        }
+      ],
+      "dialogue": [
+        {
+          "speakerId": "sophia",
+          "text": "Interesting. What impact did your work have on the business or the engineering org?",
+          "emotion": "evaluating"
+        }
+      ],
+      "interaction": {
+        "type": "user_response",
+        "prompt": "Explain the measurable impact of your work.",
+        "hints": ["metrics", "before/after", "business outcome"],
+        "requiredCollocations": ["measurable impact", "operational efficiency"],
+        "traceContext": "Impact question. User must connect technical work to business or org outcomes with numbers.",
+        "starEnabled": true,
+        "practice432Enabled": true,
+        "advanceCondition": "analysis_submitted"
+      },
+      "uncleEugeneTip": "Impact beats implementation. Start with the outcome, then explain how."
+    },
+    {
+      "id": "scene-04",
+      "index": 4,
+      "background": "startup_office_night",
+      "music": null,
+      "layers": [
+        {
+          "characterId": "sophia",
+          "pose": "neutral_smile",
+          "position": { "x": "28%", "y": "55%", "scale": 1.0 },
+          "flip": false
+        },
+        {
+          "characterId": "protagonist",
+          "pose": "speaking",
+          "position": { "x": "62%", "y": "58%", "scale": 1.0 },
+          "flip": true
+        }
+      ],
+      "dialogue": [
+        {
+          "speakerId": "sophia",
+          "text": "Tell me about your biggest technical challenge. What made it hard?",
+          "emotion": "probing"
+        }
+      ],
+      "interaction": {
+        "type": "user_response",
+        "prompt": "Describe your biggest technical challenge using STAR structure.",
+        "hints": ["situation", "constraint", "your action", "result"],
+        "requiredCollocations": ["identify bottlenecks", "validate assumptions"],
+        "traceContext": "Behavioral challenge question. Strong answers use STAR with technical depth and clear ownership.",
+        "starEnabled": true,
+        "practice432Enabled": true,
+        "advanceCondition": "analysis_submitted"
+      },
+      "uncleEugeneTip": "Name the constraint first. Constraints make your actions impressive."
+    },
+    {
+      "id": "scene-05",
+      "index": 5,
+      "background": "startup_office_night",
+      "music": null,
+      "layers": [
+        {
+          "characterId": "sophia",
+          "pose": "probing",
+          "position": { "x": "30%", "y": "55%", "scale": 1.0 },
+          "flip": false
+        },
+        {
+          "characterId": "protagonist",
+          "pose": "thinking",
+          "position": { "x": "65%", "y": "58%", "scale": 1.0 },
+          "flip": true
+        }
+      ],
+      "dialogue": [
+        {
+          "speakerId": "sophia",
+          "text": "Everyone fails sometimes. Tell me about a time something didn't go as planned.",
+          "emotion": "direct"
+        }
+      ],
+      "interaction": {
+        "type": "user_response",
+        "prompt": "Share a failure story with lessons learned.",
+        "hints": ["what went wrong", "what you learned", "what changed"],
+        "requiredCollocations": ["validate assumptions", "reduce complexity"],
+        "traceContext": "Failure question. User should show accountability, learning, and systemic improvement — not blame.",
+        "starEnabled": true,
+        "practice432Enabled": true,
+        "advanceCondition": "analysis_submitted"
+      },
+      "uncleEugeneTip": "Failures are fine. Unexamined failures are not."
+    },
+    {
+      "id": "scene-06",
+      "index": 6,
+      "background": "startup_office_night",
+      "music": null,
+      "layers": [
+        {
+          "characterId": "sophia",
+          "pose": "impressed",
+          "position": { "x": "28%", "y": "55%", "scale": 1.0 },
+          "flip": false
+        },
+        {
+          "characterId": "protagonist",
+          "pose": "speaking",
+          "position": { "x": "62%", "y": "58%", "scale": 1.0 },
+          "flip": true
+        }
+      ],
+      "dialogue": [
+        {
+          "speakerId": "sophia",
+          "text": "How do you influence teams without direct authority? Give me a leadership example.",
+          "emotion": "evaluating"
+        }
+      ],
+      "interaction": {
+        "type": "user_response",
+        "prompt": "Describe how you lead through influence, not authority.",
+        "hints": ["cross-team", "alignment", "consensus"],
+        "requiredCollocations": ["align on priorities", "stakeholder management"],
+        "traceContext": "Staff-level leadership question. User should show influence, alignment, and multi-team outcomes.",
+        "starEnabled": true,
+        "practice432Enabled": true,
+        "advanceCondition": "analysis_submitted"
+      },
+      "uncleEugeneTip": "Leadership is making others successful, not being the loudest voice."
+    },
+    {
+      "id": "scene-07",
+      "index": 7,
+      "background": "startup_office_night",
+      "music": null,
+      "layers": [
+        {
+          "characterId": "sophia",
+          "pose": "neutral_smile",
+          "position": { "x": "30%", "y": "55%", "scale": 1.0 },
+          "flip": false
+        },
+        {
+          "characterId": "protagonist",
+          "pose": "thinking",
+          "position": { "x": "65%", "y": "58%", "scale": 1.0 },
+          "flip": true
+        }
+      ],
+      "dialogue": [
+        {
+          "speakerId": "sophia",
+          "text": "Why this company? And why this role specifically?",
+          "emotion": "curious"
+        }
+      ],
+      "interaction": {
+        "type": "user_response",
+        "prompt": "Explain why you want this company and this staff-level role.",
+        "hints": ["company mission", "role fit", "what you'll contribute"],
+        "requiredCollocations": ["align on priorities", "measurable impact"],
+        "traceContext": "Motivation question. User should connect personal strengths to company needs authentically.",
+        "starEnabled": true,
+        "practice432Enabled": true,
+        "advanceCondition": "analysis_submitted"
+      },
+      "uncleEugeneTip": "Show you've done homework. Generic answers signal low interest."
+    },
+    {
+      "id": "scene-08",
+      "index": 8,
+      "background": "startup_office_night",
+      "music": null,
+      "layers": [
+        {
+          "characterId": "sophia",
+          "pose": "impressed",
+          "position": { "x": "35%", "y": "55%", "scale": 1.0 },
+          "flip": false
+        },
+        {
+          "characterId": "protagonist",
+          "pose": "speaking",
+          "position": { "x": "60%", "y": "58%", "scale": 1.0 },
+          "flip": true
+        },
+        {
+          "characterId": "trace",
+          "pose": "float_idle",
+          "position": { "x": "82%", "y": "32%", "scale": 0.5 },
+          "flip": false
+        }
+      ],
+      "dialogue": [
+        {
+          "speakerId": "sophia",
+          "text": "Last question — if you had two minutes to summarize who you are as an engineer, what would you say?",
+          "emotion": "closing"
+        }
+      ],
+      "interaction": {
+        "type": "user_response",
+        "prompt": "Give your best 2-minute compressed self-introduction.",
+        "hints": ["level", "domain", "impact", "what you're looking for"],
+        "requiredCollocations": ["distributed systems", "measurable impact", "operational efficiency"],
+        "traceContext": "Final compression test. User should deliver a polished staff-level elevator pitch under 2 minutes of speaking time.",
+        "starEnabled": true,
+        "practice432Enabled": true,
+        "advanceCondition": "analysis_submitted"
+      },
+      "uncleEugeneTip": "This is your closing argument. Compress everything you've practiced."
+    }
+  ],
+  "completion": {
+    "title": "Episode Complete",
+    "summaryTemplate": "You practiced {sceneCount} recruiter moments and learned {colocationCount} collocations.",
+    "rewardLabel": "+150 XP — New Collocations Pack"
+  }
+}
