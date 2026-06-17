@@ -121,7 +121,8 @@ export function EpisodePlayer({ episode }: EpisodePlayerProps) {
       setError(null);
 
       try {
-        const res = await fetch("/api/trace/analyze", {
+        const { withBasePath } = await import("@/lib/basePath");
+        const res = await fetch(withBasePath("/api/trace/analyze"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

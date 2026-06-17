@@ -1,4 +1,5 @@
 import { http, HttpResponse, delay } from "msw";
+import { withBasePath } from "@/lib/basePath";
 import { buildMockTraceAnalysis } from "@/lib/trace/mock";
 
 interface TraceAnalyzeBody {
@@ -11,7 +12,7 @@ interface TraceAnalyzeBody {
 }
 
 export const handlers = [
-  http.post("/api/trace/analyze", async ({ request }) => {
+  http.post(withBasePath("/api/trace/analyze"), async ({ request }) => {
     const body = (await request.json()) as TraceAnalyzeBody;
     const userAnswer = body.userAnswer ?? "";
 
