@@ -1,27 +1,29 @@
 /** Static asset paths — replace PNGs in /public without code changes */
 
+import { withBasePath } from "@/lib/basePath";
+
 export const CHARACTER_ASSETS = {
-  uncle_eugene: "/characters/uncle-eugene.png",
-  trace: "/characters/trace.png",
-  sophia: "/characters/hr-recruiter.png",
-  protagonist: "/characters/young-founder.png",
-  archi: "/characters/architect.png",
-  reli: "/characters/reliability-guardian.png",
+  uncle_eugene: withBasePath("/characters/uncle-eugene.png"),
+  trace: withBasePath("/characters/trace.png"),
+  sophia: withBasePath("/characters/hr-recruiter.png"),
+  protagonist: withBasePath("/characters/young-founder.png"),
+  archi: withBasePath("/characters/architect.png"),
+  reli: withBasePath("/characters/reliability-guardian.png"),
 } as const;
 
 export type CharacterAssetKey = keyof typeof CHARACTER_ASSETS;
 
 export const BACKGROUND_ASSETS = {
-  startup_office_night: "/backgrounds/startup-office.png",
-  startup_office: "/backgrounds/startup-office.png",
-  architecture_room: "/backgrounds/architecture-room.png",
-  incident_room: "/backgrounds/incident-room.png",
+  startup_office_night: withBasePath("/backgrounds/startup-office.png"),
+  startup_office: withBasePath("/backgrounds/startup-office.png"),
+  architecture_room: withBasePath("/backgrounds/architecture-room.png"),
+  incident_room: withBasePath("/backgrounds/incident-room.png"),
 } as const;
 
 export type BackgroundAssetKey = keyof typeof BACKGROUND_ASSETS;
 
 export const UI_ASSETS = {
-  mockupReference: "/ui/mockup-reference.png",
+  mockupReference: withBasePath("/ui/mockup-reference.png"),
 } as const;
 
 /** Map episode characterId → asset key */

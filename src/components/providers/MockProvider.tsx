@@ -1,14 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { isMockingEnabled } from "@/mocks";
+import { isMockingEnabled, useClientMock } from "@/mocks";
 
 export function MockProvider({ children }: { children: React.ReactNode }) {
   const mocking = isMockingEnabled();
-  const [ready, setReady] = useState(!mocking);
+  const clientMock = useClientMock();
+  const needsMsw = mocking && !clientMock;
+  const [ready, setReady] = useState(!needsMsw);
 
   useEffect(() => {
-    if (!mocking) return;
+    if (!needsMsw) return;
 
     let mounted = true;
 
@@ -25,7 +27,7 @@ export function MockProvider({ children }: { children: React.ReactNode }) {
     return () => {
       mounted = false;
     };
-  }, [mocking]);
+  }, [needsMsw]);
 
   if (!ready) {
     return (
@@ -39,7 +41,7 @@ export function MockProvider({ children }: { children: React.ReactNode }) {
     <>
       {mocking && (
         <div className="fixed bottom-14 right-4 z-50 px-2 py-1 rounded-md bg-amber-950/90 border border-amber-700 text-[10px] text-amber-200 font-mono">
-          MSW mock API
+          {clientMock ? "Client mock API" : "MSW mock API"}
         </div>
       )}
       {children}

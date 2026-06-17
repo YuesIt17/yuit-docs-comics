@@ -17,6 +17,9 @@ import {
 import { layersToPlacements } from "@/lib/scene/mapLayers";
 import { getCollocationPack } from "@/lib/content";
 import { resolveHrDialogFixture } from "@/mocks/fixtures/hr-dialogs";
+import { useClientMock } from "@/mocks";
+import { withBasePath } from "@/lib/basePath";
+import { buildMockTraceAnalysis } from "@/lib/trace/mock";
 import { useEpisodeStore } from "@/store/episodeStore";
 import { useProgressStore } from "@/store/progressStore";
 import { useSettingsStore } from "@/store/settingsStore";
@@ -121,26 +124,37 @@ export function EpisodePlayer({ episode }: EpisodePlayerProps) {
       setError(null);
 
       try {
-        const { withBasePath } = await import("@/lib/basePath");
-        const res = await fetch(withBasePath("/api/trace/analyze"), {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            episodeId: episode.id,
-            sceneId: scene.id,
-            promptContext: scene.interaction.traceContext,
+        let data;
+        if (useClientMock()) {
+          await new Promise((r) => setTimeout(r, 600));
+          data = buildMockTraceAnalysis({
             userAnswer: answer,
+            sceneId: scene.id,
+            episodeId: episode.id,
             collocations: scene.interaction.requiredCollocations,
-            userBackground,
-          }),
-        });
+            promptContext: scene.interaction.traceContext,
+          });
+        } else {
+          const res = await fetch(withBasePath("/api/trace/analyze"), {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              episodeId: episode.id,
+              sceneId: scene.id,
+              promptContext: scene.interaction.traceContext,
+              userAnswer: answer,
+              collocations: scene.interaction.requiredCollocations,
+              userBackground,
+            }),
+          });
 
-        if (!res.ok) {
-          const err = await res.json();
-          throw new Error(err.error ?? "Analysis failed");
+          if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.error ?? "Analysis failed");
+          }
+
+          data = await res.json();
         }
-
-        const data = await res.json();
         setAnalysis(data, scene.id);
         markSceneSubmitted(episode.id, scene.id, {
           bestAnswer: resolvedAnswer,
