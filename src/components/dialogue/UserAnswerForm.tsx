@@ -9,6 +9,7 @@ interface UserAnswerFormProps {
   prompt: string;
   hints: string[];
   onSubmit: (answer: string) => void;
+  onDraftChange?: (answer: string) => void;
   isSubmitting: boolean;
 }
 
@@ -17,9 +18,15 @@ export function UserAnswerForm({
   prompt,
   hints,
   onSubmit,
+  onDraftChange,
   isSubmitting,
 }: UserAnswerFormProps) {
   const [answer, setAnswer] = useState("");
+
+  const updateAnswer = (value: string) => {
+    setAnswer(value);
+    onDraftChange?.(value);
+  };
 
   const handleSubmit = () => {
     if (!answer.trim()) return;
@@ -40,11 +47,11 @@ export function UserAnswerForm({
         ))}
       </div>
 
-      <MockAnswerPicker sceneId={sceneId} onSelect={setAnswer} />
+      <MockAnswerPicker sceneId={sceneId} onSelect={updateAnswer} />
 
       <textarea
         value={answer}
-        onChange={(e) => setAnswer(e.target.value)}
+        onChange={(e) => updateAnswer(e.target.value)}
         placeholder="Type your answer here..."
         rows={4}
         className="w-full bg-slate-900/60 border border-panel-border rounded-lg p-3 text-sm text-slate-100 resize-none focus:outline-none focus:border-accent-cyan/50"

@@ -4,6 +4,7 @@ export const PositionSchema = z.object({
   x: z.string(),
   y: z.string(),
   scale: z.number(),
+  zIndex: z.number().optional(),
 });
 
 export const LayerSchema = z.object({

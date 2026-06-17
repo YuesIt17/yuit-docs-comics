@@ -1,11 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useSettingsStore } from "@/store/settingsStore";
+import { useProgressStore } from "@/store/progressStore";
+import { useEpisodeStore } from "@/store/episodeStore";
+import { useTraceStore } from "@/store/traceStore";
 import { Button } from "@/components/ui/Button";
 import { HeroPortrait } from "@/components/heroes/HeroPortrait";
 
 export default function SettingsPage() {
+  const router = useRouter();
   const {
     userName,
     avatarKey,
@@ -14,6 +19,30 @@ export default function SettingsPage() {
     setAvatarKey,
     setUserBackground,
   } = useSettingsStore();
+  const { resetEpisodeProgress, resetAllProgress } = useProgressStore();
+  const { resetEpisode } = useEpisodeStore();
+  const { clear: clearTrace } = useTraceStore();
+
+  const handleResetEpisode = () => {
+    if (!confirm("Сбросить прогресс эпизода HR Interview?")) return;
+    resetEpisodeProgress("hr-intro");
+    resetEpisode("hr-intro");
+    clearTrace();
+    router.push("/episodes/hr-intro");
+  };
+
+  const handleResetAll = () => {
+    if (
+      !confirm(
+        "Сбросить весь прогресс (XP, сцены, заметки)? Имя и настройки останутся."
+      )
+    )
+      return;
+    resetAllProgress();
+    resetEpisode("hr-intro");
+    clearTrace();
+    router.push("/episodes/hr-intro");
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -77,6 +106,25 @@ export default function SettingsPage() {
             placeholder="Staff Software Engineer, 10+ years, distributed systems, platform engineering..."
             className="w-full bg-slate-900 border border-panel-border rounded-lg px-3 py-2 text-sm text-white resize-none focus:outline-none focus:border-accent-cyan"
           />
+        </section>
+
+        <section className="rounded-xl border border-panel-border bg-panel/50 p-5 space-y-3">
+          <h2 className="text-sm font-semibold text-white uppercase tracking-wider">
+            Progress & Data
+          </h2>
+          <p className="text-xs text-slate-500 leading-relaxed">
+            Прогресс хранится в{" "}
+            <code className="text-slate-400">localStorage</code> браузера (ключ{" "}
+            <code className="text-slate-400">set-progress</code>): сцены, ответы,
+            заметки, XP. Сессия эпизода и Trace-анализ — в памяти до перезагрузки
+            страницы. Имя героя — в <code className="text-slate-400">set-settings</code>.
+          </p>
+          <Button variant="secondary" className="w-full" onClick={handleResetEpisode}>
+            Сбросить эпизод HR Interview
+          </Button>
+          <Button variant="secondary" className="w-full" onClick={handleResetAll}>
+            Сбросить весь прогресс (XP, все эпизоды)
+          </Button>
         </section>
 
         <Link href="/episodes/hr-intro">

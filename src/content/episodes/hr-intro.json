@@ -22,19 +22,19 @@
         {
           "characterId": "sophia",
           "pose": "neutral_smile",
-          "position": { "x": "28%", "y": "55%", "scale": 1.0 },
+          "position": { "x": "22%", "y": "0%", "scale": 1.05, "zIndex": 10 },
           "flip": false
         },
         {
           "characterId": "protagonist",
-          "pose": "thinking",
-          "position": { "x": "62%", "y": "58%", "scale": 1.0 },
-          "flip": true
+          "pose": "speaking",
+          "position": { "x": "68%", "y": "0%", "scale": 1.05, "zIndex": 11 },
+          "flip": false
         },
         {
           "characterId": "trace",
           "pose": "float_idle",
-          "position": { "x": "78%", "y": "35%", "scale": 0.6 },
+          "position": { "x": "84%", "y": "32%", "scale": 0.55, "zIndex": 25 },
           "flip": false
         }
       ],
@@ -43,14 +43,24 @@
           "speakerId": "sophia",
           "text": "Hi {protagonistName}! Thanks for joining us today. Let's start with the basics — tell me about yourself.",
           "emotion": "welcoming"
+        },
+        {
+          "speakerId": "protagonist",
+          "text": "Sure. I'm a Staff Software Engineer focused on distributed systems and internal platforms.",
+          "emotion": "confident"
+        },
+        {
+          "speakerId": "sophia",
+          "text": "Interesting. What impact did your work have on the business or the engineering org?",
+          "emotion": "evaluating"
         }
       ],
       "interaction": {
         "type": "user_response",
-        "prompt": "Introduce yourself as a Staff Software Engineer.",
-        "hints": ["mention domain", "mention scale", "mention impact"],
-        "requiredCollocations": ["distributed systems", "internal platforms"],
-        "traceContext": "First impression in staff-level HR screen. User should state level, domain, and one impact hook.",
+        "prompt": "Explain the measurable impact of your work on the business or engineering org.",
+        "hints": ["metrics", "before/after", "business outcome"],
+        "requiredCollocations": ["measurable impact", "operational efficiency"],
+        "traceContext": "Impact question after introduction. User must connect technical work to business or org outcomes with numbers.",
         "starEnabled": true,
         "practice432Enabled": true,
         "advanceCondition": "analysis_submitted"
@@ -66,19 +76,19 @@
         {
           "characterId": "sophia",
           "pose": "probing",
-          "position": { "x": "30%", "y": "55%", "scale": 1.0 },
+          "position": { "x": "22%", "y": "0%", "scale": 1.05, "zIndex": 10 },
           "flip": false
         },
         {
           "characterId": "protagonist",
           "pose": "speaking",
-          "position": { "x": "65%", "y": "58%", "scale": 1.0 },
+          "position": { "x": "68%", "y": "0%", "scale": 1.05, "zIndex": 11 },
           "flip": true
         },
         {
           "characterId": "trace",
           "pose": "scanning",
-          "position": { "x": "80%", "y": "30%", "scale": 0.55 },
+          "position": { "x": "84%", "y": "32%", "scale": 0.55, "zIndex": 25 },
           "flip": false
         }
       ],
@@ -110,14 +120,20 @@
         {
           "characterId": "sophia",
           "pose": "probing",
-          "position": { "x": "32%", "y": "55%", "scale": 1.0 },
+          "position": { "x": "22%", "y": "0%", "scale": 1.05, "zIndex": 10 },
           "flip": false
         },
         {
           "characterId": "protagonist",
           "pose": "thinking",
-          "position": { "x": "63%", "y": "58%", "scale": 1.0 },
+          "position": { "x": "68%", "y": "0%", "scale": 1.05, "zIndex": 11 },
           "flip": true
+        },
+        {
+          "characterId": "trace",
+          "pose": "thinking",
+          "position": { "x": "84%", "y": "32%", "scale": 0.55, "zIndex": 25 },
+          "flip": false
         }
       ],
       "dialogue": [
@@ -148,14 +164,20 @@
         {
           "characterId": "sophia",
           "pose": "neutral_smile",
-          "position": { "x": "28%", "y": "55%", "scale": 1.0 },
+          "position": { "x": "22%", "y": "0%", "scale": 1.05, "zIndex": 10 },
           "flip": false
         },
         {
           "characterId": "protagonist",
           "pose": "speaking",
-          "position": { "x": "62%", "y": "58%", "scale": 1.0 },
+          "position": { "x": "68%", "y": "0%", "scale": 1.05, "zIndex": 11 },
           "flip": true
+        },
+        {
+          "characterId": "trace",
+          "pose": "float_idle",
+          "position": { "x": "84%", "y": "32%", "scale": 0.55, "zIndex": 25 },
+          "flip": false
         }
       ],
       "dialogue": [
@@ -186,14 +208,20 @@
         {
           "characterId": "sophia",
           "pose": "probing",
-          "position": { "x": "30%", "y": "55%", "scale": 1.0 },
+          "position": { "x": "22%", "y": "0%", "scale": 1.05, "zIndex": 10 },
           "flip": false
         },
         {
           "characterId": "protagonist",
           "pose": "thinking",
-          "position": { "x": "65%", "y": "58%", "scale": 1.0 },
+          "position": { "x": "68%", "y": "0%", "scale": 1.05, "zIndex": 11 },
           "flip": true
+        },
+        {
+          "characterId": "trace",
+          "pose": "scanning",
+          "position": { "x": "84%", "y": "32%", "scale": 0.55, "zIndex": 25 },
+          "flip": false
         }
       ],
       "dialogue": [
@@ -224,14 +252,20 @@
         {
           "characterId": "sophia",
           "pose": "impressed",
-          "position": { "x": "28%", "y": "55%", "scale": 1.0 },
+          "position": { "x": "22%", "y": "0%", "scale": 1.05, "zIndex": 10 },
           "flip": false
         },
         {
           "characterId": "protagonist",
           "pose": "speaking",
-          "position": { "x": "62%", "y": "58%", "scale": 1.0 },
+          "position": { "x": "68%", "y": "0%", "scale": 1.05, "zIndex": 11 },
           "flip": true
+        },
+        {
+          "characterId": "trace",
+          "pose": "float_idle",
+          "position": { "x": "84%", "y": "32%", "scale": 0.55, "zIndex": 25 },
+          "flip": false
         }
       ],
       "dialogue": [
@@ -262,14 +296,20 @@
         {
           "characterId": "sophia",
           "pose": "neutral_smile",
-          "position": { "x": "30%", "y": "55%", "scale": 1.0 },
+          "position": { "x": "22%", "y": "0%", "scale": 1.05, "zIndex": 10 },
           "flip": false
         },
         {
           "characterId": "protagonist",
           "pose": "thinking",
-          "position": { "x": "65%", "y": "58%", "scale": 1.0 },
+          "position": { "x": "68%", "y": "0%", "scale": 1.05, "zIndex": 11 },
           "flip": true
+        },
+        {
+          "characterId": "trace",
+          "pose": "thinking",
+          "position": { "x": "84%", "y": "32%", "scale": 0.55, "zIndex": 25 },
+          "flip": false
         }
       ],
       "dialogue": [
@@ -300,19 +340,19 @@
         {
           "characterId": "sophia",
           "pose": "impressed",
-          "position": { "x": "35%", "y": "55%", "scale": 1.0 },
+          "position": { "x": "22%", "y": "0%", "scale": 1.05, "zIndex": 10 },
           "flip": false
         },
         {
           "characterId": "protagonist",
           "pose": "speaking",
-          "position": { "x": "60%", "y": "58%", "scale": 1.0 },
+          "position": { "x": "68%", "y": "0%", "scale": 1.05, "zIndex": 11 },
           "flip": true
         },
         {
           "characterId": "trace",
           "pose": "float_idle",
-          "position": { "x": "82%", "y": "32%", "scale": 0.5 },
+          "position": { "x": "84%", "y": "32%", "scale": 0.55, "zIndex": 25 },
           "flip": false
         }
       ],

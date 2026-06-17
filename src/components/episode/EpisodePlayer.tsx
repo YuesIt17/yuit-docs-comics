@@ -1,10 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { AppShell } from "@/components/layout/AppShell";
-import { ComicStage } from "@/components/comic/ComicStage";
-import { DialogueTabs } from "@/components/dialogue/DialogueTabs";
-import { Speaking432 } from "@/components/practice/Speaking432";
+import { EpisodeLayout } from "@/components/episode/EpisodeLayout";
+import { SceneRenderer } from "@/components/scene/SceneRenderer";
+import { DialoguePanel } from "@/components/episode/DialoguePanel";
+import { SpeakingPracticeCard } from "@/components/practice/SpeakingPracticeCard";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import {
@@ -14,6 +14,7 @@ import {
   isEpisodeComplete,
   resolvePlaceholders,
 } from "@/lib/episode-engine/sceneResolver";
+import { layersToPlacements } from "@/lib/scene/mapLayers";
 import { getCollocationPack } from "@/lib/content";
 import { resolveHrDialogFixture } from "@/mocks/fixtures/hr-dialogs";
 import { useEpisodeStore } from "@/store/episodeStore";
@@ -27,7 +28,7 @@ interface EpisodePlayerProps {
 }
 
 export function EpisodePlayer({ episode }: EpisodePlayerProps) {
-  const { userName, avatarKey, userBackground } = useSettingsStore();
+  const { userName, userBackground } = useSettingsStore();
   const {
     sceneIndex,
     dialogueLog,
@@ -50,12 +51,18 @@ export function EpisodePlayer({ episode }: EpisodePlayerProps) {
     useTraceStore();
 
   const [showComplete, setShowComplete] = useState(false);
+  const [scriptLineIndex, setScriptLineIndex] = useState(0);
+  const [answerDraft, setAnswerDraft] = useState("");
 
   const scene = getCurrentScene(episode, sceneIndex);
   const progress = getEpisodeProgress(episode.id);
   const collocationPack = getCollocationPack(episode.collocationPackId);
   const collocationItems = collocationPack?.items ?? [];
   const allCollocations = collocationItems.map((c) => c.phrase);
+
+  const scriptedLineCount = scene?.dialogue.length ?? 0;
+  const scriptComplete = scriptLineIndex >= scriptedLineCount - 1;
+  const showInput = scriptComplete;
 
   useEffect(() => {
     resetEpisode(episode.id);
@@ -67,22 +74,33 @@ export function EpisodePlayer({ episode }: EpisodePlayerProps) {
   }, [episode.id]);
 
   useEffect(() => {
-    if (!scene) return;
+    setScriptLineIndex(0);
+    setAnswerDraft("");
+  }, [scene?.id]);
+
+  useEffect(() => {
+    if (!scene || scriptLineIndex < 0) return;
+    const line = scene.dialogue[scriptLineIndex];
+    if (!line) return;
     const vars = { protagonistName: userName };
-    scene.dialogue.forEach((line) => {
-      const exists = dialogueLog.some(
-        (d) => d.text === resolvePlaceholders(line.text, vars) && !d.isUser
-      );
-      if (!exists) {
-        addDialogue({
-          speakerId: line.speakerId,
-          speakerName: getCharacterDisplayName(line.speakerId, userName),
-          text: resolvePlaceholders(line.text, vars),
-          timestamp: Date.now(),
-        });
-      }
-    });
-  }, [scene?.id, userName]);
+    const text = resolvePlaceholders(line.text, vars);
+    const exists = dialogueLog.some((d) => d.text === text && !d.isUser);
+    if (!exists) {
+      addDialogue({
+        speakerId: line.speakerId,
+        speakerName: getCharacterDisplayName(line.speakerId, userName),
+        text,
+        timestamp: Date.now(),
+      });
+    }
+  }, [scene?.id, scriptLineIndex, userName]);
+
+  const handleNextLine = () => {
+    if (!scene) return;
+    if (scriptLineIndex < scriptedLineCount - 1) {
+      setScriptLineIndex((i) => i + 1);
+    }
+  };
 
   const handleSubmitAnswer = useCallback(
     async (answer: string) => {
@@ -149,6 +167,14 @@ export function EpisodePlayer({ episode }: EpisodePlayerProps) {
   const hasSubmittedForScene =
     lastSceneId === scene?.id && analysis !== null;
 
+  const lastUserAnswer = [...dialogueLog]
+    .reverse()
+    .find((d) => d.isUser && d.speakerId === "protagonist")?.text;
+
+  const protagonistBubbleText =
+    answerDraft.trim() ||
+    (hasSubmittedForScene ? (lastUserAnswer ?? "") : "");
+
   const handleContinue = () => {
     if (!scene || !hasSubmittedForScene) return;
 
@@ -169,7 +195,7 @@ export function EpisodePlayer({ episode }: EpisodePlayerProps) {
   if (showComplete) {
     const learnedCount = progress?.completedScenes.length ?? episode.scenes.length;
     return (
-      <AppShell
+      <EpisodeLayout
         collocations={allCollocations}
         collocationItems={collocationItems}
         currentStep={episode.scenes.length}
@@ -177,7 +203,6 @@ export function EpisodePlayer({ episode }: EpisodePlayerProps) {
       >
         <div className="flex-1 flex items-center justify-center p-8">
           <div className="max-w-lg text-center space-y-6">
-            <div className="text-6xl">🎉</div>
             <h1 className="text-2xl font-bold text-white">
               {episode.completion.title}
             </h1>
@@ -188,16 +213,22 @@ export function EpisodePlayer({ episode }: EpisodePlayerProps) {
             </p>
             <Badge variant="purple">{episode.completion.rewardLabel}</Badge>
             <div className="flex gap-3 justify-center">
-              <Button onClick={() => { setShowComplete(false); setSceneIndex(0); setAnalysis(null); }}>
+              <Button
+                onClick={() => {
+                  setShowComplete(false);
+                  setSceneIndex(0);
+                  setAnalysis(null);
+                }}
+              >
                 Replay Episode
               </Button>
-              <Button variant="secondary" onClick={() => window.location.href = "/heroes"}>
+              <Button variant="secondary" onClick={() => (window.location.href = "/heroes")}>
                 Meet the Heroes
               </Button>
             </div>
           </div>
         </div>
-      </AppShell>
+      </EpisodeLayout>
     );
   }
 
@@ -207,8 +238,12 @@ export function EpisodePlayer({ episode }: EpisodePlayerProps) {
     ((sceneIndex + (hasSubmittedForScene ? 1 : 0)) / episode.scenes.length) * 100
   );
 
+  const visualMetaphors = scene.interaction.requiredCollocations
+    .map((phrase) => collocationItems.find((c) => c.phrase === phrase)?.visualMetaphor)
+    .filter(Boolean) as string[];
+
   return (
-    <AppShell
+    <EpisodeLayout
       uncleEugeneTip={showHint ? scene.uncleEugeneTip : undefined}
       episodeProgress={sceneProgress}
       currentStep={sceneIndex + 1}
@@ -223,68 +258,70 @@ export function EpisodePlayer({ episode }: EpisodePlayerProps) {
       starEnabled={scene.interaction.starEnabled}
     >
       <div className="flex flex-col min-h-0">
-        <div className="px-4 py-3 border-b border-panel-border flex items-center gap-3 flex-wrap shrink-0">
-          <Badge variant="purple">Episode 01</Badge>
-          <span className="text-sm font-semibold text-white">
-            {episode.title.toUpperCase()}
-          </span>
-          <Badge variant="cyan">{episode.difficulty}</Badge>
-          <span className="text-xs text-slate-500 ml-auto">
-            SCENE {scene.index} / {episode.meta.sceneCount}
-          </span>
-        </div>
-
-        <div className="p-4 border-b border-panel-border shrink-0">
-          <ComicStage
-            scene={scene}
+        <div className="p-4 shrink-0">
+          <SceneRenderer
+            backgroundId={scene.background}
+            characters={layersToPlacements(scene.layers, scene.background)}
+            dialogueLines={scene.dialogue}
+            visibleLineIndex={scriptLineIndex}
             protagonistName={userName}
-            avatarKey={avatarKey}
+            showUserAnswerBubble={showInput}
+            userAnswerText={protagonistBubbleText}
+            meta={{
+              episodeTitle: episode.title,
+              sceneIndex: scene.index,
+              sceneCount: episode.meta.sceneCount,
+              difficulty: episode.difficulty,
+            }}
+            visualMetaphors={visualMetaphors}
           />
-        </div>
 
-        {!hasSubmittedForScene && (
-          <div className="mx-4 mt-3 px-3 py-2 rounded-lg bg-purple-950/40 border border-purple-800/50 text-xs text-purple-200 shrink-0">
-            <strong className="text-purple-100">Your turn.</strong> Scroll down —
-            pick an HR mock answer or type your response, then Submit to Trace.
+          <div className="flex flex-wrap gap-2 mt-3">
+            {!scriptComplete && (
+              <Button onClick={handleNextLine}>
+                Next line →
+              </Button>
+            )}
+            {scriptComplete && !hasSubmittedForScene && (
+              <span className="text-xs text-purple-300 self-center">
+                Dialogue complete — respond below
+              </span>
+            )}
+            <Button variant="secondary" onClick={() => setShowHint(true)}>
+              I need a hint
+            </Button>
+            <Button
+              onClick={handleContinue}
+              disabled={!hasSubmittedForScene}
+              variant={hasSubmittedForScene ? "primary" : "secondary"}
+            >
+              Continue episode →
+            </Button>
           </div>
-        )}
-
-        <div className="flex flex-col min-h-[320px]">
-          <DialogueTabs
-            scene={scene}
-            dialogueLog={dialogueLog}
-            notes={progress?.notes ?? ""}
-            onNotesChange={(n) => setNotes(episode.id, n)}
-            onSubmitAnswer={handleSubmitAnswer}
-            isSubmitting={isLoading}
-          />
         </div>
 
-        <div className="px-4 py-3 flex gap-2 shrink-0 border-t border-panel-border bg-background/80 sticky bottom-0">
-          <Button
-            onClick={handleContinue}
-            disabled={!hasSubmittedForScene}
-          >
-            Continue →
-          </Button>
-          <Button variant="secondary" onClick={() => setShowHint(true)}>
-            I need a hint
-          </Button>
-        </div>
+        <DialoguePanel
+          scene={scene}
+          dialogueLog={dialogueLog}
+          notes={progress?.notes ?? ""}
+          onNotesChange={(n) => setNotes(episode.id, n)}
+          onSubmitAnswer={handleSubmitAnswer}
+          onAnswerDraftChange={setAnswerDraft}
+          isSubmitting={isLoading}
+          showInput={showInput}
+        />
 
         {scene.interaction.practice432Enabled && (
           <div className="px-4 pb-6 shrink-0">
-            <Speaking432
+            <SpeakingPracticeCard
               enabled
               staffHint={analysis?.staffVersion}
               onSaveRound={(round) => save432Round(episode.id, scene.id, round)}
-              savedRounds={
-                progress?.sceneProgress[scene.id]?.rounds432 ?? []
-              }
+              savedRounds={progress?.sceneProgress[scene.id]?.rounds432 ?? []}
             />
           </div>
         )}
       </div>
-    </AppShell>
+    </EpisodeLayout>
   );
 }

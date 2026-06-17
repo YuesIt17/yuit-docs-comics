@@ -26,6 +26,8 @@ interface ProgressState {
   ) => void;
   completeEpisode: (episodeId: string) => void;
   getEpisodeProgress: (episodeId: string) => EpisodeProgress | undefined;
+  resetEpisodeProgress: (episodeId: string) => void;
+  resetAllProgress: () => void;
 }
 
 function defaultEpisodeProgress(episodeId: string): EpisodeProgress {
@@ -137,6 +139,18 @@ export const useProgressStore = create<ProgressState>()(
           };
         }),
       getEpisodeProgress: (episodeId) => get().episodes[episodeId],
+      resetEpisodeProgress: (episodeId) =>
+        set((state) => {
+          const { [episodeId]: _, ...rest } = state.episodes;
+          return { episodes: rest };
+        }),
+      resetAllProgress: () =>
+        set({
+          episodes: {},
+          streak: 0,
+          xp: 0,
+          level: 1,
+        }),
     }),
     {
       name: "set-progress",
