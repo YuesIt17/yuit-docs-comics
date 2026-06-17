@@ -1,7 +1,6 @@
 "use client";
 
 import { getFixturesForScene, type HrDialogFixture } from "@/mocks/fixtures/hr-dialogs";
-import { isMockingEnabled } from "@/mocks";
 
 interface MockAnswerPickerProps {
   sceneId: string;
@@ -15,8 +14,6 @@ const QUALITY_STYLE: Record<string, string> = {
 };
 
 export function MockAnswerPicker({ sceneId, onSelect }: MockAnswerPickerProps) {
-  if (!isMockingEnabled()) return null;
-
   const fixtures = getFixturesForScene(sceneId);
   if (fixtures.length === 0) return null;
 
@@ -26,7 +23,7 @@ export function MockAnswerPicker({ sceneId, onSelect }: MockAnswerPickerProps) {
         <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">
           HR Mock Answers
         </p>
-        <span className="text-[9px] text-slate-600 font-mono">MSW fixtures</span>
+        <span className="text-[9px] text-slate-600 font-mono">demo fixtures</span>
       </div>
       <p className="text-[10px] text-slate-500">
         Load a sample answer for this scene — weak, average, or staff-level strong.
