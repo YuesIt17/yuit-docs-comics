@@ -44,7 +44,7 @@ export interface SceneRendererProps {
   showUserAnswerBubble?: boolean;
   userAnswerText?: string;
   meta?: SceneMeta;
-  visualMetaphors?: string[];
+  visualMetaphors?: { phrase: string; metaphor: string }[];
 }
 
 function bubbleSide(speakerId: string): BubbleSide {
@@ -185,12 +185,12 @@ export function SceneRenderer({
 
       {visualMetaphors.length > 0 && (
         <div className="absolute bottom-[24%] left-3 z-20 flex flex-wrap gap-1 max-w-[50%]">
-          {visualMetaphors.map((m) => (
+          {visualMetaphors.map(({ phrase, metaphor }) => (
             <span
-              key={m}
+              key={phrase}
               className="text-[10px] px-2 py-0.5 rounded-full bg-black/50 text-cyan-200 border border-cyan-800/40 backdrop-blur-sm"
             >
-              {METAPHOR_ICONS[m] ?? "💡"} {m}
+              {METAPHOR_ICONS[metaphor] ?? "💡"} {metaphor}
             </span>
           ))}
         </div>

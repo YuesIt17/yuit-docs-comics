@@ -253,9 +253,10 @@ export function EpisodePlayer({ episode }: EpisodePlayerProps) {
     ((sceneIndex + (hasSubmittedForScene ? 1 : 0)) / episode.scenes.length) * 100
   );
 
-  const visualMetaphors = scene.interaction.requiredCollocations
-    .map((phrase) => collocationItems.find((c) => c.phrase === phrase)?.visualMetaphor)
-    .filter(Boolean) as string[];
+  const visualMetaphors = scene.interaction.requiredCollocations.flatMap((phrase) => {
+    const item = collocationItems.find((c) => c.phrase === phrase);
+    return item ? [{ phrase, metaphor: item.visualMetaphor }] : [];
+  });
 
   return (
     <EpisodeLayout
