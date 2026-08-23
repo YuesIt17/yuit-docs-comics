@@ -127,6 +127,20 @@ export default function SettingsPage() {
           </Button>
         </section>
 
+        <section className="rounded-xl border border-purple-800/30 bg-purple-950/20 p-5 space-y-3">
+          <h2 className="text-sm font-semibold text-white uppercase tracking-wider">
+            V2 Preview
+          </h2>
+          <p className="text-xs text-slate-500">
+            Simplified interview coach UX — V1 routes remain available.
+          </p>
+          <Link href="/v2">
+            <Button variant="outline" className="w-full">
+              Try Interview Coach V2
+            </Button>
+          </Link>
+        </section>
+
         <Link href="/episodes/hr-intro">
           <Button className="w-full">Save & Continue</Button>
         </Link>
