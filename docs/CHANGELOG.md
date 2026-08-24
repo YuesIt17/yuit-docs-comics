@@ -5,6 +5,103 @@
 
 ---
 
+## [0.4.0] — 2026-08-24
+
+V2.4: role profile / resume context + HR session initialization fix.
+
+### Added
+- Target profile selector: Technical Engineering Manager · Solution Architect
+- Resume markdown sources parsed into `ResumeRoleContext` (`engineering-manager` / `architecture`)
+- Profile-aware Trace feedback, Strong B2 framing, and Sophia follow-ups
+- Profile persisted in `settingsStore`; switching mid-session confirms and restarts from Q1
+- Profile wired into Practice + Mock Interview session state
+
+### Fixed
+- HR Practice Q1 no longer shows a mid-intro “Interesting… impact…” follow-up
+- New Practice sessions always start at scene 0 (no silent stale resume from progress index)
+- `getInterviewerQuestion` uses the opening NPC line, not scripted later follow-ups
+
+### Changed
+- `scene-01` content aligned to “Tell me about yourself”
+- Trace analyze API accepts `targetProfileId` and includes resume positioning context
+
+### Unchanged
+- V2.2 voice / reset / correction safety
+- Browser STT/TTS; no external TTS provider
+
+---
+
+## [0.3.1] — 2026-08-24
+
+V2.2 Practice UX: session reset, voice controls, Trace correction safety.
+
+### Added
+- `Reset session` on HR Practice (confirm → first question; voice prefs unchanged)
+- Voice Settings popover: English voices, rate 0.75 / 1.0 / 1.15, Preview voice
+- Persist speech voice + rate in `settingsStore` / localStorage
+- `Listen to my answer` in the answer composer before Trace submit
+- `answerTransform` helpers + focused Node tests for cosmetic / insufficient / grounding gates
+
+### Changed
+- Minimal correction UI: cosmetic-only diffs show “No meaningful correction needed”
+- Strong B2: no fabricated career content; insufficient answers get coaching prompt instead
+- Trace mock + live API sanitize transformations; prompt rules updated for grounding
+- Trace debrief: insufficient state instead of arbitrary identical axis scores
+
+### Unchanged
+- Core Practice / Mock Interview flow and dark V2 visual language
+- Browser STT; no external TTS provider
+
+---
+
+## [0.3.0] — 2026-08-23
+
+V2.1 P0: HR Mock Interview Mode separated from Practice Mode + verified personal grounding.
+
+### Added
+- `/v2/practice/hr/mock` — full recruiter screen simulation (Trace silent until end)
+- `InterviewSession` store + thin interview engine (phases, turns, short follow-up nudge)
+- End-of-interview Trace review (overall / strong / improve / English / readiness)
+- Verified `content/me/profile.json`, `career.json`, `hr-context.json`
+- `content/interviews/hr-core-bank.json` + question bank notes (CORE provenance)
+- Home CTAs: HR Practice vs HR Mock Interview
+
+### Changed
+- Episode protagonist positioning → Technical Engineering Manager / architecture direction
+- Demo STAR cues removed from `content/me/stories.json`
+- HR dialog fixtures marked `GENERIC_DEMO` (not personal facts)
+- Settings background placeholder softened toward TEM positioning
+
+### Unchanged
+- Practice Mode coaching loop at `/v2/practice/hr`
+- Browser STT/TTS and Listening Mode
+- V1 routes
+
+---
+
+## [0.2.2] — 2026-08-23
+
+V2 practice: mentor progressive hints + browser TTS playback + Listening Mode.
+
+### Added
+- Progressive Uncle Eugene hints (structure → phrase → personal story cue from `content/me`)
+- `src/content/me/stories.json` — minimal story bank for Level 3 cues
+- TTS abstraction: `browserSpeechSynthesizer` + `useSpeechSynthesis`
+- Interviewer Listen / Stop / Replay / Slower on Sophia questions
+- Listening Mode: hear first, show transcript on demand
+- Trace debrief Listen for My version / Minimal correction / Strong B2
+- Future-ready `recordingTypes.ts` for MediaRecorder (not wired to UI)
+
+### Changed
+- Compression practice rounds: ~2.5 min → 90s → 60s
+- Hint no longer dumps raw tip chips; mentor card instead
+
+### Unchanged
+- V1 routes and Trace API schemas
+- Conversation-first practice layout
+
+---
+
 ## [0.2.1] — 2026-08-23
 
 V2 HR Practice: conversation-first interview UX + browser voice transcription MVP.

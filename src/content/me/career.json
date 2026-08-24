@@ -1,0 +1,53 @@
+{
+  "status": "verified",
+  "pathSummary": "Mechanical / CAD → Software Engineering → Senior IC → Platform / Technical Leadership → Engineering Manager → Systems & Solution Architecture direction",
+  "currentRole": {
+    "title": "Engineering Manager (Technical)",
+    "teamSize": 15,
+    "teamScope": [
+      "Backend",
+      "Frontend",
+      "QA",
+      "QA Automation",
+      "Business Analysis",
+      "Systems Analysis"
+    ],
+    "product": "Supplier Platform",
+    "scale": {
+      "dailyActiveUsers": "100K+",
+      "notes": "Large-scale supplier platform"
+    }
+  },
+  "focusAreas": [
+    "system and solution architecture",
+    "integrations and APIs",
+    "authentication / identity",
+    "distributed systems",
+    "technical documentation",
+    "observability",
+    "CI/CD and delivery",
+    "platform engineering",
+    "cross-functional collaboration",
+    "stakeholder communication"
+  ],
+  "verifiedOutcomes": [
+    {
+      "id": "lead-time-improvement",
+      "summary": "Shared platform and process work contributed to roughly 30% shorter feature lead time",
+      "confidence": "verified_in_coach_source"
+    },
+    {
+      "id": "oauth-architecture",
+      "summary": "OAuth2/OIDC architecture work in platform identity flows",
+      "confidence": "verified_in_coach_source"
+    }
+  ],
+  "doNotInvent": [
+    "10x login spike",
+    "p99 recovery numbers not listed here",
+    "36 hour recovery",
+    "zero downtime claims",
+    "$200K savings",
+    "2M users / 12 teams demo metrics from fixtures"
+  ]
+}

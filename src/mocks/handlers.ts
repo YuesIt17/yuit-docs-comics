@@ -9,6 +9,7 @@ interface TraceAnalyzeBody {
   userAnswer?: string;
   collocations?: string[];
   userBackground?: string;
+  targetProfileId?: "engineering-manager" | "architecture";
 }
 
 export const handlers = [
@@ -33,6 +34,7 @@ export const handlers = [
         episodeId: body.episodeId,
         collocations: body.collocations,
         promptContext: body.promptContext,
+        targetProfileId: body.targetProfileId,
       });
 
       return HttpResponse.json(analysis, {

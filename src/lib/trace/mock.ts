@@ -3,6 +3,17 @@ import {
   fixtureToTraceAnalysis,
   resolveHrDialogFixture,
 } from "@/mocks/fixtures/hr-dialogs";
+import {
+  applyLightEnglishFixes,
+  isInsufficientInterviewAnswer,
+  sanitizeTraceTransformations,
+} from "@/lib/trace/answerTransform";
+import {
+  buildRolePositioningFeedback,
+  frameStrongB2ForProfile,
+  pickProfileFollowUp,
+  type TargetProfileId,
+} from "@/lib/interview/resumeProfiles";
 
 export interface MockAnalyzeInput {
   userAnswer: string;
@@ -10,11 +21,12 @@ export interface MockAnalyzeInput {
   episodeId?: string;
   collocations?: string[];
   promptContext?: string;
+  targetProfileId?: TargetProfileId;
 }
 
 const SCENE_FEEDBACK: Record<string, string> = {
   "scene-01":
-    "Good start! State your level, domain, and one impact hook in the first 30 seconds.",
+    "Good start! State your current role, scope, and target direction in the first 30 seconds.",
   "scene-02":
     "Add concrete scale signals — teams, traffic, or infrastructure size.",
   "scene-03":
@@ -36,7 +48,11 @@ function detectCollocations(answer: string, collocations: string[]): string[] {
   return collocations.filter((c) => lower.includes(c.toLowerCase()));
 }
 
-function scoreAnswer(answer: string, detectedCount: number, totalTargets: number): number {
+function scoreAnswer(
+  answer: string,
+  detectedCount: number,
+  totalTargets: number
+): number {
   const words = answer.trim().split(/\s+/).length;
   let score = 50;
 
@@ -52,7 +68,10 @@ function scoreAnswer(answer: string, detectedCount: number, totalTargets: number
     score += 12;
   }
 
-  if (/\b(i|we)\b/i.test(answer) && /\b(built|led|designed|improved|reduced|scaled)\b/i.test(answer)) {
+  if (
+    /\b(i|we)\b/i.test(answer) &&
+    /\b(built|led|designed|improved|reduced|scaled)\b/i.test(answer)
+  ) {
     score += 8;
   }
 
@@ -76,6 +95,7 @@ export function buildMockTraceAnalysis(input: MockAnalyzeInput): TraceAnalysis {
     userAnswer,
     sceneId = "scene-01",
     collocations = [],
+    targetProfileId = "engineering-manager",
   } = input;
 
   if (userAnswer.trim().toLowerCase() === "[mock:error]") {
@@ -84,7 +104,51 @@ export function buildMockTraceAnalysis(input: MockAnalyzeInput): TraceAnalysis {
 
   const fixture = resolveHrDialogFixture(userAnswer, sceneId);
   if (fixture) {
-    return fixtureToTraceAnalysis(fixture);
+    const base = sanitizeTraceTransformations(
+      fixtureToTraceAnalysis(fixture),
+      userAnswer
+    );
+    const positioning = buildRolePositioningFeedback(
+      targetProfileId,
+      userAnswer
+    );
+    return {
+      ...base,
+      staffVersion: frameStrongB2ForProfile(targetProfileId, userAnswer),
+      recruiterFollowUp:
+        base.recruiterFollowUp ??
+        pickProfileFollowUp(targetProfileId, sceneId),
+      improvements: positioning
+        ? [positioning, ...base.improvements].slice(0, 3)
+        : base.improvements,
+    };
+  }
+
+  if (isInsufficientInterviewAnswer(userAnswer)) {
+    return sanitizeTraceTransformations(
+      {
+        score: 0,
+        breakdown: {
+          clarity: 0,
+          structure: 0,
+          vocabulary: 0,
+          fluency: 0,
+          impact: 0,
+        },
+        strengths: [],
+        improvements: [],
+        feedback: "",
+        naturalVersion: applyLightEnglishFixes(userAnswer),
+        staffVersion: "",
+        detectedCollocations: [],
+        compressionLevels: {
+          basic: userAnswer.trim(),
+          natural: applyLightEnglishFixes(userAnswer),
+          staff: "",
+        },
+      },
+      userAnswer
+    );
   }
 
   const detected = detectCollocations(userAnswer, collocations);
@@ -106,58 +170,49 @@ export function buildMockTraceAnalysis(input: MockAnalyzeInput): TraceAnalysis {
     improvements.push(`Try using: ${collocations.slice(0, 2).join(", ")}`);
   }
 
-  if (/\d/.test(userAnswer)) {
+  const positioning = buildRolePositioningFeedback(
+    targetProfileId,
+    userAnswer
+  );
+  if (positioning) {
+    improvements.unshift(positioning);
+  } else if (/\d/.test(userAnswer)) {
     strengths.push("Includes measurable signals");
-  } else {
+  } else if (sceneId !== "scene-01") {
     improvements.push("Add scale or measurable impact");
   }
 
   if (score >= 75) {
     strengths.push("Confident professional tone");
   } else {
-    improvements.push("Use more staff-level compression");
+    improvements.push("Tighten phrasing for clearer interview delivery");
   }
 
   const feedback =
     SCENE_FEEDBACK[sceneId] ??
     "Good effort. Focus on clarity, impact, and natural engineering phrasing.";
 
-  return {
-    score,
-    breakdown,
-    strengths: strengths.slice(0, 3),
-    improvements: improvements.slice(0, 3),
-    feedback,
-    naturalVersion: polishNatural(userAnswer),
-    staffVersion: compressStaff(userAnswer, detected),
-    detectedCollocations: detected.length > 0 ? detected : collocations.slice(0, 2),
-    compressionLevels: {
-      basic: userAnswer.trim() || "I am a software engineer with backend experience.",
-      natural: polishNatural(userAnswer),
-      staff: compressStaff(userAnswer, detected),
+  const naturalVersion = applyLightEnglishFixes(userAnswer);
+  const staffVersion = frameStrongB2ForProfile(targetProfileId, userAnswer);
+
+  return sanitizeTraceTransformations(
+    {
+      score,
+      breakdown,
+      strengths: strengths.slice(0, 3),
+      improvements: improvements.slice(0, 3),
+      feedback,
+      naturalVersion,
+      staffVersion,
+      detectedCollocations:
+        detected.length > 0 ? detected : collocations.slice(0, 2),
+      compressionLevels: {
+        basic: userAnswer.trim(),
+        natural: naturalVersion,
+        staff: staffVersion,
+      },
+      recruiterFollowUp: pickProfileFollowUp(targetProfileId, sceneId),
     },
-  };
-}
-
-function polishNatural(answer: string): string {
-  const trimmed = answer.trim();
-  if (!trimmed) {
-    return "I'm a Staff Software Engineer focused on building distributed systems and internal platforms.";
-  }
-  if (trimmed.length > 200) return trimmed.slice(0, 200) + "...";
-  return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
-}
-
-function compressStaff(answer: string, collocations: string[]): string {
-  const hasPlatform = /platform|internal|infra/i.test(answer);
-  const hasScale = /scale|distributed|throughput/i.test(answer);
-  const collocationHint = collocations[0] ?? "operational impact";
-
-  if (hasPlatform && hasScale) {
-    return `Platform engineer — I improve ${collocationHint} and scalability under peak load.`;
-  }
-  if (hasPlatform) {
-    return "Staff engineer building internal platforms with measurable team impact.";
-  }
-  return "Staff engineer — I make complex systems operable and align teams on priorities.";
+    userAnswer
+  );
 }

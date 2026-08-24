@@ -1,17 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { MockAnswerPicker } from "@/components/dialogue/MockAnswerPicker";
+import { V2MentorHintCard } from "@/components/v2/V2MentorHintCard";
 import { features } from "@/config/features";
 import { isMockingEnabled } from "@/mocks";
 import { useSpeechTranscription } from "@/hooks/useSpeechTranscription";
+import { useSpeechSynthesis } from "@/hooks/useSpeechSynthesis";
+import { buildProgressiveHints } from "@/lib/v2/progressiveHints";
 import type { AnswerSource, SubmittedAnswer } from "@/lib/v2/answer";
 
 interface V2AnswerComposerProps {
   sceneId: string;
   hints: string[];
-  hintTip?: string;
+  starEnabled?: boolean;
+  questionText?: string;
+  traceContext?: string;
   seedAnswer?: string;
   isSubmitting: boolean;
   onSubmit: (answer: SubmittedAnswer) => void;
@@ -32,7 +37,9 @@ function appendSpeech(base: string, spoken: string): string {
 export function V2AnswerComposer({
   sceneId,
   hints,
-  hintTip,
+  starEnabled = false,
+  questionText = "",
+  traceContext = "",
   seedAnswer = "",
   isSubmitting,
   onSubmit,
@@ -43,12 +50,26 @@ export function V2AnswerComposer({
 }: V2AnswerComposerProps) {
   const [draft, setDraft] = useState(seedAnswer);
   const [source, setSource] = useState<AnswerSource>("typed");
-  const [showHint, setShowHint] = useState(false);
+  const [hintLevel, setHintLevel] = useState(0);
   const [baseBeforeListen, setBaseBeforeListen] = useState("");
 
   const speech = useSpeechTranscription("en-US");
+  const tts = useSpeechSynthesis();
   const showMock = isMockingEnabled();
   const voiceEnabled = features.voiceInput;
+
+  const hintLadder = useMemo(
+    () =>
+      buildProgressiveHints({
+        starEnabled,
+        hints,
+        questionText,
+        traceContext,
+      }),
+    [starEnabled, hints, questionText, traceContext]
+  );
+
+  const visibleHints = hintLadder.slice(0, hintLevel);
 
   const spokenWhileListening = speech.isListening
     ? [speech.transcript, speech.interimTranscript].filter(Boolean).join(" ")
@@ -91,6 +112,10 @@ export function V2AnswerComposer({
     speech.start();
   };
 
+  const handleHint = () => {
+    setHintLevel((n) => Math.min(n + 1, hintLadder.length));
+  };
+
   const handleSubmit = () => {
     let text = draft;
     let finalSource: AnswerSource = source;
@@ -110,6 +135,7 @@ export function V2AnswerComposer({
 
     const trimmed = text.trim();
     if (!trimmed || isSubmitting) return;
+    tts.stop();
     onSubmit({
       text: trimmed,
       source:
@@ -119,6 +145,17 @@ export function V2AnswerComposer({
             ? "voice"
             : "typed",
     });
+  };
+
+  const handleListenToAnswer = () => {
+    const text = speech.isListening ? commitListeningDraft() : displayValue;
+    const trimmed = text.trim();
+    if (!trimmed || isSubmitting) return;
+    if (tts.isSpeaking && tts.lastText === trimmed) {
+      tts.stop();
+      return;
+    }
+    tts.play(trimmed);
   };
 
   return (
@@ -154,24 +191,7 @@ export function V2AnswerComposer({
         </p>
       )}
 
-      {showHint && hintTip && (
-        <div className="rounded-lg border border-amber-800/40 bg-amber-950/30 px-4 py-3 text-sm text-amber-100/90">
-          {hintTip}
-        </div>
-      )}
-
-      {showHint && hints.length > 0 && (
-        <div className="flex flex-wrap gap-1.5">
-          {hints.map((hint) => (
-            <span
-              key={hint}
-              className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400"
-            >
-              {hint}
-            </span>
-          ))}
-        </div>
-      )}
+      {hintLevel > 0 && <V2MentorHintCard visibleLevels={visibleHints} />}
 
       <div className="flex flex-wrap items-center gap-2">
         {voiceEnabled && speech.isSupported && (
@@ -197,6 +217,24 @@ export function V2AnswerComposer({
           </p>
         )}
 
+        {tts.isSupported && (
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={handleListenToAnswer}
+            disabled={!displayValue.trim() || isSubmitting}
+            aria-label={
+              tts.isSpeaking && tts.lastText === displayValue.trim()
+                ? "Stop listening to answer"
+                : "Listen to my answer"
+            }
+          >
+            {tts.isSpeaking && tts.lastText === displayValue.trim()
+              ? "Stop"
+              : "🔊 Listen to my answer"}
+          </Button>
+        )}
+
         <Button
           onClick={handleSubmit}
           disabled={!displayValue.trim() || isSubmitting}
@@ -207,14 +245,24 @@ export function V2AnswerComposer({
         </Button>
       </div>
 
+      {tts.error && (
+        <p className="text-xs text-amber-300/90" role="alert">
+          {tts.error}
+        </p>
+      )}
+
       <div className="flex flex-wrap gap-2">
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => setShowHint((v) => !v)}
-          disabled={isSubmitting}
+          onClick={handleHint}
+          disabled={isSubmitting || hintLevel >= hintLadder.length}
         >
-          Hint
+          {hintLevel === 0
+            ? "Hint"
+            : hintLevel >= hintLadder.length
+              ? "Hints complete"
+              : "Another hint"}
         </Button>
         <Button
           variant="ghost"

@@ -1,0 +1,20 @@
+{
+  "status": "verified",
+  "preferredName": "Eugene",
+  "positioning": "Technical Engineering Manager with a Systems & Solution Architecture direction",
+  "experienceYearsOverall": 15,
+  "experienceYearsIt": 13,
+  "targetRoles": [
+    "Technical Engineering Manager",
+    "Engineering Manager",
+    "Solution Architect",
+    "Technical Architect",
+    "Systems / Software Architect"
+  ],
+  "targetMarket": "International, particularly Europe",
+  "englishTarget": "Clear B2 professional English",
+  "notes": [
+    "Do not invent metrics or ownership beyond verified fields in career.json and hr-context.json.",
+    "Frontend/React is part of the background, not the full identity."
+  ]
+}

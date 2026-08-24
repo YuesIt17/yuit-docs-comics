@@ -26,6 +26,7 @@ export const TraceAnalysisSchema = z.object({
     .optional(),
   feedback: z.string().optional(),
   recruiterFollowUp: z.string().optional(),
+  evaluationGate: z.enum(["ok", "insufficient_content"]).optional(),
 });
 
 export function parseTraceResponse(data: unknown): TraceAnalysis {

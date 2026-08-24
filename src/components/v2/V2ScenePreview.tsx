@@ -67,7 +67,8 @@ export function getInterviewerQuestion(
   const npcLines = scene.dialogue.filter(
     (line) => line.speakerId !== "protagonist"
   );
-  const lastLine = npcLines[npcLines.length - 1] ?? scene.dialogue[0];
-  if (!lastLine) return scene.interaction.prompt;
-  return resolvePlaceholders(lastLine.text, { protagonistName });
+  // Prefer the opening NPC question — not scripted mid-scene follow-ups.
+  const questionLine = npcLines[0] ?? scene.dialogue[0];
+  if (!questionLine) return scene.interaction.prompt;
+  return resolvePlaceholders(questionLine.text, { protagonistName });
 }

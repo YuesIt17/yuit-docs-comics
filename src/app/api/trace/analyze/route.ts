@@ -6,7 +6,9 @@ import {
   buildTraceUserPrompt,
 } from "@/lib/trace/prompts";
 import { buildMockTraceAnalysis } from "@/lib/trace/mock";
+import { sanitizeTraceTransformations } from "@/lib/trace/answerTransform";
 import { parseTraceResponse } from "@/lib/trace/parseTraceResponse";
+import { buildProfileBackgroundSnippet } from "@/lib/interview/resumeProfiles";
 
 const RequestSchema = z.object({
   episodeId: z.string(),
@@ -16,6 +18,9 @@ const RequestSchema = z.object({
   targetLevel: z.enum(["natural", "staff"]).optional(),
   collocations: z.array(z.string()).optional(),
   userBackground: z.string().optional(),
+  targetProfileId: z
+    .enum(["engineering-manager", "architecture"])
+    .optional(),
 });
 
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -33,8 +38,12 @@ function checkRateLimit(ip: string): boolean {
   return true;
 }
 
-function hashAnswer(sceneId: string, answer: string): string {
-  return `${sceneId}:${answer.slice(0, 200)}`;
+function hashAnswer(
+  sceneId: string,
+  answer: string,
+  targetProfileId?: string
+): string {
+  return `${sceneId}:${targetProfileId ?? "default"}:${answer.slice(0, 200)}`;
 }
 
 export async function POST(request: NextRequest) {
@@ -51,7 +60,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const cacheKey = hashAnswer(parsed.sceneId, parsed.userAnswer);
+    const cacheKey = hashAnswer(
+      parsed.sceneId,
+      parsed.userAnswer,
+      parsed.targetProfileId
+    );
     const cached = cache.get(cacheKey);
     if (cached) {
       return NextResponse.json(cached);
@@ -62,6 +75,10 @@ export async function POST(request: NextRequest) {
       process.env.TRACE_USE_MOCK === "true" ||
       process.env.NEXT_PUBLIC_API_MOCKING === "enabled";
 
+    const targetProfileId = parsed.targetProfileId ?? "engineering-manager";
+    const targetProfileContext =
+      buildProfileBackgroundSnippet(targetProfileId);
+
     if (!apiKey || forceMock) {
       const mock = buildMockTraceAnalysis({
         userAnswer: parsed.userAnswer,
@@ -69,6 +86,7 @@ export async function POST(request: NextRequest) {
         episodeId: parsed.episodeId,
         collocations: parsed.collocations,
         promptContext: parsed.promptContext,
+        targetProfileId,
       });
       cache.set(cacheKey, mock);
       return NextResponse.json(mock);
@@ -81,6 +99,7 @@ export async function POST(request: NextRequest) {
       userAnswer: parsed.userAnswer,
       collocations: parsed.collocations,
       userBackground: parsed.userBackground,
+      targetProfileContext,
     });
 
     let analysis;
@@ -98,7 +117,10 @@ export async function POST(request: NextRequest) {
       const content = completion.choices[0]?.message?.content;
       if (!content) throw new Error("Empty response from OpenAI");
 
-      analysis = parseTraceResponse(JSON.parse(content));
+      analysis = sanitizeTraceTransformations(
+        parseTraceResponse(JSON.parse(content)),
+        parsed.userAnswer
+      );
     } catch {
       const repairCompletion = await openai.chat.completions.create({
         model: "gpt-4o-mini",
@@ -117,7 +139,10 @@ export async function POST(request: NextRequest) {
 
       const repairContent = repairCompletion.choices[0]?.message?.content;
       if (!repairContent) throw new Error("Repair attempt failed");
-      analysis = parseTraceResponse(JSON.parse(repairContent));
+      analysis = sanitizeTraceTransformations(
+        parseTraceResponse(JSON.parse(repairContent)),
+        parsed.userAnswer
+      );
     }
 
     cache.set(cacheKey, analysis);

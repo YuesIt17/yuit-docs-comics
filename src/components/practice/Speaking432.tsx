@@ -12,10 +12,29 @@ interface Speaking432Props {
   savedRounds?: Round432Data[];
 }
 
+/** Timed compression: ~2.5 min → 90s → 60s (same story, more concise). */
 const ROUNDS = [
-  { round: 1 as const, minutes: 4, label: "Full explanation", color: "purple" as const },
-  { round: 2 as const, minutes: 3, label: "Go deeper", color: "green" as const },
-  { round: 3 as const, minutes: 2, label: "Summarise", color: "orange" as const },
+  {
+    round: 1 as const,
+    durationSeconds: 150,
+    durationMinutes: 2.5,
+    label: "Full story",
+    color: "purple" as const,
+  },
+  {
+    round: 2 as const,
+    durationSeconds: 90,
+    durationMinutes: 1.5,
+    label: "Tighten it",
+    color: "green" as const,
+  },
+  {
+    round: 3 as const,
+    durationSeconds: 60,
+    durationMinutes: 1,
+    label: "60-second pitch",
+    color: "orange" as const,
+  },
 ];
 
 export function Speaking432({
@@ -31,14 +50,17 @@ export function Speaking432({
   return (
     <div className="border-t border-panel-border pt-4 mt-4">
       <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">
-        4-3-2 Speaking Practice
+        Compression practice
       </h3>
+      <p className="text-[11px] text-slate-500 mb-3">
+        Retell the same story shorter each round.
+      </p>
       <div className="flex flex-wrap gap-3 items-start">
         {ROUNDS.map((r) => (
           <TimerRound
             key={r.round}
             round={r.round}
-            durationMinutes={r.minutes}
+            durationSeconds={r.durationSeconds}
             label={r.label}
             color={r.color}
             isActive={activeRound === r.round}
@@ -47,7 +69,7 @@ export function Speaking432({
             onSave={(answer) => {
               onSaveRound({
                 round: r.round,
-                durationMinutes: r.minutes,
+                durationMinutes: r.durationMinutes,
                 answer,
                 completedAt: Date.now(),
               });
@@ -56,9 +78,9 @@ export function Speaking432({
             saved={savedRounds.find((s) => s.round === r.round)}
             hint={
               r.round === 3 && staffHint
-                ? `Staff hint: ${staffHint}`
+                ? `Strong version: ${staffHint}`
                 : r.round === 2
-                  ? "Remove filler, add structure"
+                  ? "Remove filler, keep structure"
                   : undefined
             }
           />

@@ -6,6 +6,7 @@ export const features = {
   voiceInput: true,
   branchingDialogue: false,
   advancedGamification: false,
+  mockInterview: true,
 } as const;
 
 export function getProductVariantFromSearch(

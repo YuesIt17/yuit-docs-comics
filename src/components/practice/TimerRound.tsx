@@ -6,7 +6,8 @@ import type { Round432Data } from "@/lib/episode-engine/types";
 
 interface TimerRoundProps {
   round: 1 | 2 | 3;
-  durationMinutes: number;
+  /** Total duration in seconds */
+  durationSeconds: number;
   label: string;
   color: "purple" | "green" | "orange";
   isActive: boolean;
@@ -23,8 +24,20 @@ const COLOR_MAP = {
   orange: "border-orange-700 bg-orange-950/40",
 };
 
+function formatDurationLabel(seconds: number): string {
+  if (seconds >= 120 && seconds % 60 === 0) {
+    return `${seconds / 60} min`;
+  }
+  if (seconds === 90) return "90 sec";
+  if (seconds === 60) return "60 sec";
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  if (s === 0) return `${m} min`;
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
 export function TimerRound({
-  durationMinutes,
+  durationSeconds,
   label,
   color,
   isActive,
@@ -34,8 +47,7 @@ export function TimerRound({
   saved,
   hint,
 }: TimerRoundProps) {
-  const totalSeconds = durationMinutes * 60;
-  const [secondsLeft, setSecondsLeft] = useState(totalSeconds);
+  const [secondsLeft, setSecondsLeft] = useState(durationSeconds);
   const [answer, setAnswer] = useState(saved?.answer ?? "");
   const [running, setRunning] = useState(false);
   const prevActive = useRef(isActive);
@@ -43,14 +55,14 @@ export function TimerRound({
   useEffect(() => {
     if (isActive && !prevActive.current) {
       setRunning(true);
-      setSecondsLeft(totalSeconds);
+      setSecondsLeft(durationSeconds);
     }
     if (!isActive && prevActive.current) {
       setRunning(false);
-      setSecondsLeft(totalSeconds);
+      setSecondsLeft(durationSeconds);
     }
     prevActive.current = isActive;
-  }, [isActive, totalSeconds]);
+  }, [isActive, durationSeconds]);
 
   useEffect(() => {
     if (!running) return;
@@ -73,7 +85,7 @@ export function TimerRound({
   const secs = secondsLeft % 60;
 
   const handleStart = () => {
-    setSecondsLeft(totalSeconds);
+    setSecondsLeft(durationSeconds);
     setRunning(true);
     onStart();
   };
@@ -88,7 +100,9 @@ export function TimerRound({
     <div
       className={`flex-1 min-w-[140px] rounded-xl border p-3 ${COLOR_MAP[color]} ${saved ? "opacity-80" : ""}`}
     >
-      <div className="text-lg font-bold text-white">{durationMinutes} min</div>
+      <div className="text-lg font-bold text-white">
+        {formatDurationLabel(durationSeconds)}
+      </div>
       <div className="text-[10px] text-slate-400 mb-2">{label}</div>
       {hint && (
         <p className="text-[10px] text-slate-500 mb-2 line-clamp-2">{hint}</p>

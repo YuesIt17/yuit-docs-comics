@@ -3,9 +3,15 @@
 import type { TraceAnalysis } from "@/lib/episode-engine/types";
 import { Button } from "@/components/ui/Button";
 import { HeroPortrait } from "@/components/heroes/HeroPortrait";
+import { useSpeechSynthesis } from "@/hooks/useSpeechSynthesis";
+import {
+  STRONG_B2_UNAVAILABLE,
+  isMeaningfulCorrection,
+} from "@/lib/trace/answerTransform";
 
 interface V2TraceDebriefProps {
   analysis: TraceAnalysis;
+  userAnswerText: string;
   onTryAgain: () => void;
   onNextQuestion: () => void;
   isLastQuestion?: boolean;
@@ -24,41 +30,127 @@ const AXIS_LABELS: { key: keyof TraceAnalysis["breakdown"]; label: string }[] =
     { key: "fluency", label: "Naturalness" },
   ];
 
+function ListenRow({
+  label,
+  text,
+  isSupported,
+  isSpeaking,
+  activeText,
+  onPlay,
+  onStop,
+  emptyMessage,
+}: {
+  label: string;
+  text: string;
+  isSupported: boolean;
+  isSpeaking: boolean;
+  activeText: string | null;
+  onPlay: (text: string) => void;
+  onStop: () => void;
+  emptyMessage?: string;
+}) {
+  if (!text.trim()) {
+    if (!emptyMessage) return null;
+    return (
+      <div className="space-y-1.5">
+        <p className="text-[10px] uppercase tracking-wider text-slate-500">
+          {label}
+        </p>
+        <p className="text-sm text-slate-400 leading-relaxed">{emptyMessage}</p>
+      </div>
+    );
+  }
+
+  const isThisPlaying = isSpeaking && activeText === text;
+
+  return (
+    <div className="space-y-1.5">
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-[10px] uppercase tracking-wider text-slate-500">
+          {label}
+        </p>
+        {isSupported && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => (isThisPlaying ? onStop() : onPlay(text))}
+            aria-label={
+              isThisPlaying ? `Stop ${label}` : `Listen to ${label}`
+            }
+          >
+            {isThisPlaying ? "Stop" : "Listen"}
+          </Button>
+        )}
+      </div>
+      <p className="text-sm text-slate-200 leading-relaxed">{text}</p>
+    </div>
+  );
+}
+
 export function V2TraceDebrief({
   analysis,
+  userAnswerText,
   onTryAgain,
   onNextQuestion,
   isLastQuestion = false,
 }: V2TraceDebriefProps) {
+  const tts = useSpeechSynthesis();
+  const insufficient = analysis.evaluationGate === "insufficient_content";
+  const meaningfulMinimal = isMeaningfulCorrection(
+    userAnswerText,
+    analysis.naturalVersion
+  );
+
   return (
     <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
       <div className="flex items-center gap-3">
         <HeroPortrait characterId="trace" size="md" alt="Trace" showBorder />
         <div>
           <p className="text-xs uppercase tracking-widest text-accent-cyan">
-            Trace · Answer Review
+            {insufficient ? "Trace · More context needed" : "Trace · Answer Review"}
           </p>
-          <p className="text-sm text-slate-400">
-            Overall score: {analysis.score}/100
-          </p>
+          {!insufficient && (
+            <p className="text-sm text-slate-400">
+              Overall score: {analysis.score}/100
+            </p>
+          )}
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-        {AXIS_LABELS.map(({ key, label }) => (
-          <div
-            key={key}
-            className="rounded-lg border border-panel-border bg-panel/40 px-3 py-2 text-center"
-          >
-            <p className="text-[10px] uppercase text-slate-500">{label}</p>
-            <p className="text-lg font-semibold text-white">
-              {toTenScale(analysis.breakdown[key])}/10
+      {insufficient ? (
+        <section className="rounded-xl border border-amber-900/40 bg-amber-950/20 p-4 space-y-3">
+          <p className="text-sm text-slate-200 leading-relaxed">
+            {analysis.feedback}
+          </p>
+          <ul className="space-y-1.5 text-sm text-slate-400">
+            <li>Answer completeness: insufficient</li>
+            <li>English correction: limited</li>
+            <li>Interview evaluation: not enough evidence</li>
+          </ul>
+          {analysis.improvements[0] && (
+            <p className="text-sm text-amber-200/90">
+              Try: {analysis.improvements[0]}
             </p>
-          </div>
-        ))}
-      </div>
+          )}
+        </section>
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+          {AXIS_LABELS.map(({ key, label }) => (
+            <div
+              key={key}
+              className="rounded-lg border border-panel-border bg-panel/40 px-3 py-2 text-center"
+            >
+              <p className="text-[10px] uppercase text-slate-500">{label}</p>
+              <p className="text-lg font-semibold text-white">
+                {toTenScale(analysis.breakdown[key])}/10
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
 
-      {analysis.strengths.length > 0 && (
+      {!insufficient && analysis.strengths.length > 0 && (
         <section className="space-y-2">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-emerald-400">
             Good
@@ -74,7 +166,7 @@ export function V2TraceDebrief({
         </section>
       )}
 
-      {analysis.improvements.length > 0 && (
+      {!insufficient && analysis.improvements.length > 0 && (
         <section className="space-y-2">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-amber-400">
             Improve
@@ -90,31 +182,64 @@ export function V2TraceDebrief({
         </section>
       )}
 
-      <section className="space-y-3 rounded-xl border border-panel-border bg-slate-900/40 p-4">
+      <section className="space-y-4 rounded-xl border border-panel-border bg-slate-900/40 p-4">
         <h3 className="text-xs font-semibold uppercase tracking-wider text-accent-cyan">
-          English
+          Listen & compare
         </h3>
-        <div className="space-y-3 text-sm">
-          <div>
-            <p className="text-[10px] uppercase text-slate-500 mb-1">
-              Natural version
+        {tts.error && (
+          <p className="text-xs text-amber-300/90" role="alert">
+            {tts.error}
+          </p>
+        )}
+        <ListenRow
+          label="My version"
+          text={userAnswerText}
+          isSupported={tts.isSupported}
+          isSpeaking={tts.isSpeaking}
+          activeText={tts.lastText}
+          onPlay={tts.play}
+          onStop={tts.stop}
+        />
+
+        {meaningfulMinimal ? (
+          <ListenRow
+            label="Minimal correction"
+            text={analysis.naturalVersion}
+            isSupported={tts.isSupported}
+            isSpeaking={tts.isSpeaking}
+            activeText={tts.lastText}
+            onPlay={tts.play}
+            onStop={tts.stop}
+          />
+        ) : (
+          <div className="space-y-1.5">
+            <p className="text-[10px] uppercase tracking-wider text-slate-500">
+              Minimal correction
             </p>
-            <p className="text-slate-300 leading-relaxed">
-              {analysis.naturalVersion}
+            <p className="text-sm text-slate-400 leading-relaxed">
+              No meaningful correction needed.
+            </p>
+            <p className="text-xs text-slate-500">
+              Only capitalization/punctuation changed.
             </p>
           </div>
-          <div>
-            <p className="text-[10px] uppercase text-slate-500 mb-1">
-              Interview-ready version
-            </p>
-            <p className="text-slate-200 leading-relaxed">
-              {analysis.staffVersion}
-            </p>
-          </div>
-        </div>
+        )}
+
+        <ListenRow
+          label="Strong B2 version"
+          text={analysis.staffVersion}
+          isSupported={tts.isSupported}
+          isSpeaking={tts.isSpeaking}
+          activeText={tts.lastText}
+          onPlay={tts.play}
+          onStop={tts.stop}
+          emptyMessage={
+            insufficient ? STRONG_B2_UNAVAILABLE : undefined
+          }
+        />
       </section>
 
-      {analysis.detectedCollocations.length > 0 && (
+      {!insufficient && analysis.detectedCollocations.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
           {analysis.detectedCollocations.map((phrase) => (
             <span

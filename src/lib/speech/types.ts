@@ -24,3 +24,34 @@ export interface SpeechTranscriber {
   stop(): void;
   abort(): void;
 }
+
+export interface SpeechSynthesizerOptions {
+  rate?: number;
+  lang?: string;
+  voiceURI?: string;
+  voiceName?: string;
+}
+
+export interface SpeechSynthesizerCallbacks {
+  onStart?: () => void;
+  onEnd?: () => void;
+  onError?: (message: string) => void;
+}
+
+export interface SpeechSynthesizer {
+  isSupported(): boolean;
+  speak(
+    text: string,
+    options?: SpeechSynthesizerOptions,
+    callbacks?: SpeechSynthesizerCallbacks
+  ): void;
+  stop(): void;
+  getVoices(): SpeechSynthesisVoiceInfo[];
+}
+
+export interface SpeechSynthesisVoiceInfo {
+  name: string;
+  lang: string;
+  default: boolean;
+  voiceURI: string;
+}

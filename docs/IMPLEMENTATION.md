@@ -287,7 +287,18 @@ yuit-docs-comics/
 |------|------------|
 | `prompts.ts` | System prompt + user prompt builder для OpenAI |
 | `parseTraceResponse.ts` | Zod-валидация ответа LLM |
-| `mock.ts` | `buildMockTraceAnalysis()` — эвристический скоринг + fixtures |
+| `answerTransform.ts` | Cosmetic vs meaningful correction; insufficient-content gate; grounded Strong B2 |
+| `mock.ts` | `buildMockTraceAnalysis()` — эвристический скоринг + fixtures + sanitize + role profile |
+
+#### `interview/` — Mock + role profiles
+
+| Файл | Назначение |
+|------|------------|
+| `types.ts` | InterviewSession / turns / phases |
+| `engine.ts` | Mock flow, short follow-ups, end review |
+| `personalContext.ts` | Verified content/me grounding |
+| `parseResumeMarkdown.ts` | Frontmatter + PROFESSIONAL SUMMARY parser |
+| `resumeProfiles.ts` | EM / Solution Architect role-positioning context |
 
 #### Прочее
 
@@ -303,7 +314,7 @@ yuit-docs-comics/
 |-------|---------|------------|
 | `episodeStore.ts` | ❌ | Текущая сцена, dialogue log, hint flag |
 | `progressStore.ts` | ✅ localStorage | XP, level, scene progress, notes, 432 rounds |
-| `settingsStore.ts` | ✅ localStorage | userName, avatarKey, userBackground |
+| `settingsStore.ts` | ✅ localStorage | userName, avatarKey, userBackground, speech voice/rate, targetProfileId |
 | `traceStore.ts` | ❌ | analysis, loading, error, lastSceneId |
 
 ### `src/mocks/` — мок-слой
@@ -374,13 +385,29 @@ yuit-docs-comics/
   breakdown: { clarity, structure, vocabulary, fluency, impact };
   strengths: string[];
   improvements: string[];
-  naturalVersion: string;
-  staffVersion: string;
+  naturalVersion: string;           // Minimal correction
+  staffVersion: string;             // Strong B2 (empty when insufficient)
   detectedCollocations: string[];
   feedback?: string;
   recruiterFollowUp?: string;       // Sophia follow-up
+  evaluationGate?: "ok" | "insufficient_content";
 }
 ```
+
+Request may include `targetProfileId`: `"engineering-manager" | "architecture"`.
+
+Post-processing (`sanitizeTraceTransformations`) runs on mock and live OpenAI responses:
+- insufficient placeholders → coaching prompt, no fabricated Strong B2;
+- unsupported invented claims in Strong B2 → grounded rephrase of the user answer;
+- UI hides cosmetic-only Minimal Correction duplicates.
+- Role positioning feedback is added when the answer framing mismatches the selected resume profile.
+
+### Role profiles (`content/me/resumes`)
+
+- `engineering-manager.md` / `architecture.md` — same career, different positioning
+- Parsed via `parseResumeMarkdown` + `getResumeRoleContext`
+- Practice/Mock header shows selected profile; reset keeps profile and restarts at Q1
+- New Practice sessions always start at scene 0 (Tell me about yourself)
 
 ### Режимы работы
 

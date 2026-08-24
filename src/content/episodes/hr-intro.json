@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "path": "hr-interviews",
   "title": "Tell Me About Yourself",
-  "subtitle": "HR Interview — Staff Engineer Introduction",
+  "subtitle": "HR Interview — Technical Engineering Manager Introduction",
   "difficulty": "A2-B1",
   "meta": {
     "durationMinutes": 25,
     "sceneCount": 8,
-    "tags": ["interview", "introduction", "staff-engineer"]
+    "tags": ["interview", "introduction", "engineering-manager", "architecture"]
   },
   "characters": ["sophia", "protagonist", "trace"],
   "collocationPackId": "hr-pack-01",
@@ -41,31 +41,21 @@
       "dialogue": [
         {
           "speakerId": "sophia",
-          "text": "Hi {protagonistName}! Thanks for joining us today. Let's start with the basics — tell me about yourself.",
+          "text": "Hi {protagonistName}, thanks for joining. Let's start with your background. Tell me about yourself.",
           "emotion": "welcoming"
-        },
-        {
-          "speakerId": "protagonist",
-          "text": "Sure. I'm a Staff Software Engineer focused on distributed systems and internal platforms.",
-          "emotion": "confident"
-        },
-        {
-          "speakerId": "sophia",
-          "text": "Interesting. What impact did your work have on the business or the engineering org?",
-          "emotion": "evaluating"
         }
       ],
       "interaction": {
         "type": "user_response",
-        "prompt": "Explain the measurable impact of your work on the business or engineering org.",
-        "hints": ["metrics", "before/after", "business outcome"],
-        "requiredCollocations": ["measurable impact", "operational efficiency"],
-        "traceContext": "Impact question after introduction. User must connect technical work to business or org outcomes with numbers.",
+        "prompt": "Give a clear professional introduction: current role, scope, and direction.",
+        "hints": ["current role", "team / scope", "what you're targeting next"],
+        "requiredCollocations": ["cross-functional", "technical delivery"],
+        "traceContext": "Opening introduction. User should state current role, scope, and target direction without inventing facts. Role framing depends on selected target profile.",
         "starEnabled": true,
         "practice432Enabled": true,
         "advanceCondition": "analysis_submitted"
       },
-      "uncleEugeneTip": "Strong engineers don't try to sound smart. They make difficult ideas feel simple."
+      "uncleEugeneTip": "Lead with who you are now, then one sentence on scope, then where you're headed."
     },
     {
       "id": "scene-02",

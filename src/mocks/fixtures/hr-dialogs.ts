@@ -1,5 +1,12 @@
 import type { TraceAnalysis } from "@/lib/episode-engine/types";
 
+/**
+ * All fixtures in this file are GENERIC_DEMO only.
+ * Never treat metrics/stories here as Eugene's verified personal experience.
+ * Personal facts live in src/content/me/* only.
+ */
+export const FIXTURE_PROVENANCE = "GENERIC_DEMO" as const;
+
 export type HrAnswerQuality = "weak" | "average" | "strong";
 
 export interface HrDialogFixture {
@@ -11,6 +18,8 @@ export interface HrDialogFixture {
   userAnswer: string;
   analysis: TraceAnalysis;
   sophiaFollowUp: string;
+  /** Always GENERIC_DEMO for this file */
+  provenance?: typeof FIXTURE_PROVENANCE;
 }
 
 export interface HrSceneMeta {
@@ -26,7 +35,7 @@ export const HR_SCENE_META: HrSceneMeta[] = [
     topic: "Tell Me About Yourself",
     useCase: "introduction",
     sophiaQuestion:
-      "Hi! Thanks for joining us today. Let's start with the basics — tell me about yourself.",
+      "Hi Eugene, thanks for joining. Let's start with your background. Tell me about yourself.",
   },
   {
     sceneId: "scene-02",

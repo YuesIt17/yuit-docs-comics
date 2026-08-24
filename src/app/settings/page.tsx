@@ -103,7 +103,7 @@ export default function SettingsPage() {
             value={userBackground}
             onChange={(e) => setUserBackground(e.target.value)}
             rows={4}
-            placeholder="Staff Software Engineer, 10+ years, distributed systems, platform engineering..."
+            placeholder="Technical Engineering Manager, 15+ years, Supplier Platform, architecture direction..."
             className="w-full bg-slate-900 border border-panel-border rounded-lg px-3 py-2 text-sm text-white resize-none focus:outline-none focus:border-accent-cyan"
           />
         </section>

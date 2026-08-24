@@ -1,0 +1,69 @@
+{
+  "id": "hr-core-v1",
+  "title": "HR Recruiter Screen — Core Topics",
+  "topics": [
+    {
+      "id": "opening",
+      "phase": "opening",
+      "provenance": "CORE",
+      "sophiaPrompt": "Hi Eugene, thanks for joining. How are you today?",
+      "intent": "warm_open"
+    },
+    {
+      "id": "background",
+      "phase": "background",
+      "provenance": "CORE",
+      "sophiaPrompt": "Great. Let's start with your background. Tell me about yourself.",
+      "intent": "introduction"
+    },
+    {
+      "id": "current_role",
+      "phase": "current_role",
+      "provenance": "CORE",
+      "sophiaPrompt": "What does your current Engineering Manager role look like day to day?",
+      "intent": "current_role"
+    },
+    {
+      "id": "motivation",
+      "phase": "motivation",
+      "provenance": "CORE",
+      "sophiaPrompt": "What is driving your move toward Systems and Solution Architecture?",
+      "intent": "motivation"
+    },
+    {
+      "id": "role_fit",
+      "phase": "role_fit",
+      "provenance": "CORE",
+      "sophiaPrompt": "For this kind of role, how hands-on do you want to stay technically?",
+      "intent": "role_fit"
+    },
+    {
+      "id": "experience",
+      "phase": "experience",
+      "provenance": "CORE",
+      "sophiaPrompt": "Can you share one example where you owned a cross-team technical decision?",
+      "intent": "selective_experience"
+    },
+    {
+      "id": "logistics",
+      "phase": "logistics",
+      "provenance": "CORE",
+      "sophiaPrompt": "Before we wrap up — is there anything about timeline or location I should know?",
+      "intent": "logistics"
+    },
+    {
+      "id": "candidate_questions",
+      "phase": "candidate_questions",
+      "provenance": "CORE",
+      "sophiaPrompt": "What questions do you have for me about the role or the team?",
+      "intent": "candidate_questions"
+    },
+    {
+      "id": "closing",
+      "phase": "closing",
+      "provenance": "CORE",
+      "sophiaPrompt": "Thanks for your time today, Eugene. We'll be in touch about next steps. Anything else you'd like to add?",
+      "intent": "closing"
+    }
+  ]
+}

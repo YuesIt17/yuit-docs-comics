@@ -6,12 +6,14 @@ interface V2PracticeLayoutProps {
   children: React.ReactNode;
   title?: string;
   subtitle?: string;
+  actions?: React.ReactNode;
 }
 
 export function V2PracticeLayout({
   children,
   title = "HR Interview",
   subtitle,
+  actions,
 }: V2PracticeLayoutProps) {
   return (
     <div className="flex flex-col flex-1 min-h-0">
@@ -28,6 +30,9 @@ export function V2PracticeLayout({
             <p className="text-xs text-slate-500 truncate">{subtitle}</p>
           )}
         </div>
+        {actions && (
+          <div className="shrink-0 flex items-center gap-1">{actions}</div>
+        )}
       </div>
       <div className="flex-1 min-h-0 overflow-y-auto">{children}</div>
     </div>

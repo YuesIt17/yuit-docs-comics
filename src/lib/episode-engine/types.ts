@@ -115,6 +115,8 @@ export interface CompressionLevels {
   staff: string;
 }
 
+export type TraceEvaluationGate = "ok" | "insufficient_content";
+
 export interface TraceAnalysis {
   score: number;
   breakdown: TraceBreakdown;
@@ -126,6 +128,7 @@ export interface TraceAnalysis {
   compressionLevels?: CompressionLevels;
   feedback?: string;
   recruiterFollowUp?: string;
+  evaluationGate?: TraceEvaluationGate;
 }
 
 export interface TraceAnalyzeRequest {

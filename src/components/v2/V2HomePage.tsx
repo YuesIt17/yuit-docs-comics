@@ -61,10 +61,10 @@ export function V2HomePage() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h2 className="text-lg font-semibold text-white group-hover:text-purple-100">
-                  Start HR Interview
+                  HR Practice
                 </h2>
                 <p className="text-sm text-slate-400 mt-1">
-                  Recruiter questions with Trace feedback
+                  One question at a time with Trace coaching
                 </p>
                 <p className="text-xs text-slate-500 mt-2">15–20 min</p>
               </div>
@@ -80,6 +80,26 @@ export function V2HomePage() {
             )}
           </Link>
 
+          <Link
+            href="/v2/practice/hr/mock"
+            className="block rounded-xl border border-cyan-800/40 bg-gradient-to-br from-cyan-950/40 to-slate-900/80 p-5 hover:border-cyan-600/50 transition-colors group"
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h2 className="text-lg font-semibold text-white group-hover:text-cyan-100">
+                  HR Mock Interview
+                </h2>
+                <p className="text-sm text-slate-400 mt-1">
+                  Full recruiter screen — Trace review only at the end
+                </p>
+                <p className="text-xs text-slate-500 mt-2">20–30 min</p>
+              </div>
+              <span className="text-2xl shrink-0" aria-hidden>
+                →
+              </span>
+            </div>
+          </Link>
+
           {COMING_SOON.map((item) => (
             <div
               key={item.track}
@@ -90,7 +110,7 @@ export function V2HomePage() {
                   <h2 className="text-base font-medium text-slate-400">
                     {item.label}
                   </h2>
-                  <p className="text-xs text-slate-600 mt-1">Coming in v0.3.0</p>
+                  <p className="text-xs text-slate-600 mt-1">Coming later</p>
                 </div>
                 <Button variant="secondary" size="sm" disabled>
                   Soon
